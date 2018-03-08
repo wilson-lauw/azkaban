@@ -14,7 +14,7 @@ def list_files(PATH=cwd):
 PROJECT_NAME = 'test_project'
 print 'building...'
 project = Project(PROJECT_NAME)
-for f in list_files(cwd + '/test_folder'):
+for f in list_files(cwd + '/common'):
     project.add_file(f, f.replace(cwd, ''))
 
 project.properties = {'retries': 1, 'retry.backoff':60000}
