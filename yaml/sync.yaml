@@ -1,0 +1,65 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: sync
+spec:
+  schedule: "*/1 * * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: sync
+            image: gcr.io/[project-id]/azkaban-sync
+            command: ["/bin/sh", "-c"]
+            args:
+              - /scripts/sync_exec.py && touch /tmp/pod/main-terminated
+            volumeMounts:
+              - name: cloudsql-instance-credentials
+                mountPath: /secrets/cloudsql
+                readOnly: true
+              - name: tmp-pod
+                mountPath: /tmp/pod
+          - name: cloudsql-proxy
+            image: gcr.io/cloudsql-docker/gce-proxy:1.11
+            command: ["/bin/sh", "-c"]
+            args:
+              - |
+                /cloud_sql_proxy --dir=/cloudsql -instances=[project-id]:asia-east1:azkaban-db=tcp:3306 -credential_file=/secrets/cloudsql/credentials.json &
+                CHILD_PID=$!
+                (while true; do if [[ -f "/tmp/pod/main-terminated" ]]; then kill $CHILD_PID; echo "Killed $CHILD_PID as the main container terminated."; fi; sleep 1; done) &
+                wait $CHILD_PID
+                if [[ -f "/tmp/pod/main-terminated" ]]; then exit 0; echo "Job completed. Exiting..."; fi
+            volumeMounts:
+              - name: cloudsql-instance-credentials
+                mountPath: /secrets/cloudsql
+                readOnly: true
+              - name: tmp-pod
+                mountPath: /tmp/pod
+                readOnly: true
+            livenessProbe:
+              failureThreshold: 5
+              exec:
+                command: ["nc", "-z", "127.0.0.1", "3306"]
+              initialDelaySeconds: 1
+              periodSeconds: 5
+              successThreshold: 1
+              timeoutSeconds: 10
+            readinessProbe:
+              failureThreshold: 5
+              exec:
+                command: ["nc", "-z", "127.0.0.1", "3306"]
+              initialDelaySeconds: 1
+              periodSeconds: 5
+              successThreshold: 1
+              timeoutSeconds: 10
+          volumes:
+            - name: cloudsql-instance-credentials
+              secret:
+                secretName: cloudsql-instance-credentials
+            - name: cloudsql
+              emptyDir:
+            - name: tmp-pod
+              emptyDir: {}
+          restartPolicy: OnFailure

@@ -1,0 +1,17 @@
+FROM java:8-jre
+
+RUN rm /etc/apt/sources.list.d/jessie-backports.list
+RUN apt-get update
+RUN apt-get install -y python
+RUN apt-get install -y python-pip
+WORKDIR /azkaban-exec-server
+ADD azkaban-exec-server/build/install/azkaban-exec-server /azkaban-exec-server
+ADD common /azkaban-exec-server
+ADD scripts /scripts
+RUN chmod +x /scripts/*
+
+ENV AZKABAN_OPTS -Xmx3G -Xms3G -XX:+UseParNewGC -XX:+UseConcMarkSweepGC \
+                 -XX:CMSInitiatingOccupancyFraction=70 -XX:+CMSParallelRemarkEnabled -XX:ReservedCodeCacheSize=256m
+EXPOSE 12321
+
+CMD /scripts/start-exec.sh
