@@ -19,9 +19,6 @@ print check_output(cmd, shell=True)
 
 wait_for_port_ready(3306, 5, 3)
 
-cmd = 'cat /common/conf/azkaban.properties|grep mysql.password'
-passwd = check_output(cmd, shell=True).replace('mysql.password=','').rstrip()
-
 # wait for pods are stable
 def check_exec_pods_stability():
     cmd = 'kubectl get po -o wide|grep exec|grep 2/2|grep Running|wc -l'
@@ -46,9 +43,21 @@ while not stable:
 
 print "Pods are stable"
 
+cmd = 'cat /common/conf/azkaban.properties|grep mysql.host'
+host = check_output(cmd, shell=True).replace('mysql.host=','').rstrip()
+
+cmd = 'cat /common/conf/azkaban.properties|grep mysql.database'
+db = check_output(cmd, shell=True).replace('mysql.database=','').rstrip()
+
+cmd = 'cat /common/conf/azkaban.properties|grep mysql.user'
+user = check_output(cmd, shell=True).replace('mysql.user=','').rstrip()
+
+cmd = 'cat /common/conf/azkaban.properties|grep mysql.password'
+passwd = check_output(cmd, shell=True).replace('mysql.password=','').rstrip()
+
 # grab executors list from db
 sql = 'select host from executors'
-from_db = mysql_util.mysql_fetch(sql, '127.0.0.1', 'root', passwd, 'azkaban')
+from_db = mysql_util.mysql_fetch(sql, host, user, passwd, db)
 executors_in_db = []
 for row in from_db:
     executors_in_db.append(row['host'])
@@ -69,14 +78,14 @@ if executors_in_db != executors_in_kube:
     print 'executors list inconsistent..!!'
     print 'purging list from db...'
     sql = 'TRUNCATE TABLE executors'
-    mysql_util.mysql_execute(sql, '127.0.0.1', 'root', passwd, 'azkaban')
+    mysql_util.mysql_execute(sql, host, user, passwd, db)
     print 'populating db...'
     if len(executors_in_kube) > 0:
         values = []
-        for host in executors_in_kube:
-            values.append("('{host}',12321)".format(host=host))
+        for current_host in executors_in_kube:
+            values.append("('{current_host}',12321)".format(current_host=current_host))
         sql = 'INSERT INTO executors (host, port) VALUES ' + ','.join(values)
-        mysql_util.mysql_execute(sql, '127.0.0.1', 'root', passwd, 'azkaban')
+        mysql_util.mysql_execute(sql, host, user, passwd, db)
 
     # reload executors
     print 'reload executors'
