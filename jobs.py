@@ -31,7 +31,7 @@ project.build(path, overwrite=True)
 print 'build complete'
 
 print 'uploading...'
-session = Session('http://admin:iamadminletmein@localhost:8081')
+session = Session('http://admin:admin@localhost:8081')
 session.upload_project(PROJECT_NAME, path)
 print 'upload complete'
 

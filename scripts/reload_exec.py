@@ -5,7 +5,7 @@ import json
 
 def reload_exec():
     url = 'http://web.default.svc.cluster.local'
-    payload = {'action': 'login', 'username': 'admin', 'password': 'iamadminletmein'}
+    payload = {'action': 'login', 'username': 'admin', 'password': 'admin'}
 
     r = requests.post(url, data=payload)
     print r.status_code
