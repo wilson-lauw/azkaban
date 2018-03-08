@@ -75,7 +75,8 @@ The service account need to these role:
 - `Cloud SQL Client`
 - `Kubernetes Engine Developer`
  
-We assume the GKE cluster name is `azkaban` and the cloudSQL instanceID is `azkaban-db`, both are on zone `asia-east1-a`. 
+We assume the GKE cluster name is `azkaban` and the cloudSQL instanceID is `azkaban-db`, both are on zone `asia-east1-a`.
+Otherwise, you can change it in `sync_exec.py` and files in `yaml/`. 
 Things that you may need to change:
 - Project ID: `[project-id]` (you can find and replace all)
 - Azkaban config on `conf/`
