@@ -79,16 +79,17 @@ We assume the GKE cluster name is `azkaban` and the cloudSQL instanceID is `azka
 Otherwise, you can change it in `sync_exec.py` and files in `yaml/`. 
 Things that you may need to change:
 - Project ID: `[project-id]` (you can find and replace all)
+- Image tag: `[image-tag]`
 - Azkaban config on `conf/`
 
 ```
-docker build -t gcr.io/[project-id]/azkaban-sync -f Dockerfile-sync .
-docker build -t gcr.io/[project-id]/azkaban-exec -f Dockerfile-exec .
-docker build -t gcr.io/[project-id]/azkaban-web -f Dockerfile-web .
+docker build -t gcr.io/[project-id]/azkaban-sync:[image-tag] -f Dockerfile-sync .
+docker build -t gcr.io/[project-id]/azkaban-exec:[image-tag] -f Dockerfile-exec .
+docker build -t gcr.io/[project-id]/azkaban-web:[image-tag] -f Dockerfile-web .
 
-gcloud docker -- push gcr.io/[project-id]/azkaban-sync
-gcloud docker -- push gcr.io/[project-id]/azkaban-exec
-gcloud docker -- push gcr.io/[project-id]/azkaban-web
+gcloud docker -- push gcr.io/[project-id]/azkaban-sync:[image-tag]
+gcloud docker -- push gcr.io/[project-id]/azkaban-exec:[image-tag]
+gcloud docker -- push gcr.io/[project-id]/azkaban-web:[image-tag]
 
 kubectl apply -f yaml/
 ```

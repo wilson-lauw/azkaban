@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: gcr.io/[project-id]/azkaban-web
+        image: gcr.io/[project-id]/azkaban-web:[image-tag]
         ports:
         - containerPort: 8081
         resources:

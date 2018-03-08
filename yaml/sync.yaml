@@ -11,7 +11,7 @@ spec:
         spec:
           containers:
           - name: sync
-            image: gcr.io/[project-id]/azkaban-sync
+            image: gcr.io/[project-id]/azkaban-sync:[image-tag]
             command: ["/bin/sh", "-c"]
             args:
               - /scripts/sync_exec.py && touch /tmp/pod/main-terminated
