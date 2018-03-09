@@ -10,12 +10,12 @@ from wait_for_port_ready import wait_for_port_ready
 import time
 import requests
 
-start = time.time()
+
 
 # activate service account and kubectl
 cmd = 'gcloud auth activate-service-account --key-file=/secrets/cloudsql/credentials.json'
 print check_output(cmd, shell=True)
-cmd = 'gcloud container clusters get-credentials azkaban --zone asia-east1-a --project [project-id]'
+cmd = 'gcloud container clusters get-credentials azkaban --zone asia-east1-a --project tvlk-data-dev-179204'
 print check_output(cmd, shell=True)
 
 wait_for_port_ready(3306, 5, 3)
@@ -43,6 +43,8 @@ while not stable:
     stable = check_exec_pods_stability()
 
 print "Pods are stable"
+
+start = time.time()
 
 cmd = 'cat /common/conf/azkaban.properties|grep mysql.host'
 host = check_output(cmd, shell=True).replace('mysql.host=','').rstrip()
@@ -101,15 +103,19 @@ resp = requests.get(URL)
 executorStatusMap = resp.json()['executorStatusMap']
 registered_executors = []
 
-for id, exec in executorStatusMap.iteritems():
-    host = exec['host']
+for id, execInfo in executorStatusMap.iteritems():
+    host = execInfo['host']
     registered_executors.append(host)
 
 registered_executors = set(registered_executors)
+print registered_executors
 
 if registered_executors != executors_in_kube:
     print 'reload executors'
     reload_exec()
+
+else:
+    print 'registered executors list consistent'
 
 end = time.time()
 print('Elapsed: ' + str((end-start) * 1000) + ' ms')
