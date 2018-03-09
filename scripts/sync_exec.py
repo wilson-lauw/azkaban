@@ -8,6 +8,7 @@ import mysql_util
 from reload_exec import reload_exec
 from wait_for_port_ready import wait_for_port_ready
 import time
+import requests
 
 start = time.time()
 
@@ -83,16 +84,32 @@ if executors_in_db != executors_in_kube:
     if len(executors_in_kube) > 0:
         values = []
         for current_host in executors_in_kube:
-            values.append("('{current_host}',12321)".format(current_host=current_host))
-        sql = 'INSERT INTO executors (host, port) VALUES ' + ','.join(values)
+            values.append("('{current_host}',12321, true)".format(current_host=current_host))
+        sql = 'INSERT INTO executors (host, port, active) VALUES ' + ','.join(values)
         mysql_util.mysql_execute(sql, host, user, passwd, db)
 
     # reload executors
-    print 'reload executors'
+    print 'reload executors after db sync'
     reload_exec()
 
 else:
     print 'executors list consistent'
+
+# grab executors from web server
+URL = 'http://web.default.svc.cluster.local/status'
+resp = requests.get(URL)
+executorStatusMap = resp.json()['executorStatusMap']
+registered_executors = []
+
+for id, exec in executorStatusMap.iteritems():
+    host = exec['host']
+    registered_executors.append(host)
+
+registered_executors = set(registered_executors)
+
+if registered_executors != executors_in_kube:
+    print 'reload executors'
+    reload_exec()
 
 end = time.time()
 print('Elapsed: ' + str((end-start) * 1000) + ' ms')
