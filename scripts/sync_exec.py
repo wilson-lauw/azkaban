@@ -29,7 +29,8 @@ wait_for_port_ready(3306, 15)
 wait_for_port_ready(8081, 15)
 
 while True:
-
+    time.sleep(60)
+    
     try:
         # wait for pods are stable
         stable = check_exec_pods_stability()
@@ -121,5 +122,3 @@ while True:
     except Exception as ex:
         print(traceback.format_exc())
         sys.stdout.flush()
-
-    time.sleep(60)
