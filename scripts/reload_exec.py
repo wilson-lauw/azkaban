@@ -2,9 +2,12 @@
 
 import requests
 import json
+import sys
 
-def reload_exec():
+def reload_exec(local=False):
     url = 'http://web.default.svc.cluster.local'
+    if local:
+        url = 'http://localhost:8081'
     payload = {'action': 'login', 'username': 'admin', 'password': 'admin'}
 
     r = requests.post(url, data=payload)
@@ -19,4 +22,7 @@ def reload_exec():
     print r.text
 
 if __name__ == "__main__":
-    reload_exec()
+    if len(sys.argv) > 0:
+        reload_exec(local=True)
+    else:
+        reload_exec()
