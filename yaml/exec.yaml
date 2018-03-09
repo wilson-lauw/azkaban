@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: exec
-        image: gcr.io/[project-id]/azkaban-exec:[image-tag]
+        image: gcr.io/[product-id]/azkaban-exec:[image-tag]
         ports:
         - containerPort: 12321
         resources:
@@ -51,7 +51,7 @@ spec:
       - name: cloudsql-proxy
         image: gcr.io/cloudsql-docker/gce-proxy:1.11
         command: ["/cloud_sql_proxy",
-                  "-instances=[project-id]:asia-east1:azkaban-db=tcp:3306",
+                  "-instances=[product-id]:asia-east1:azkaban-db=tcp:3306",
                   "-credential_file=/secrets/cloudsql/credentials.json"]
         volumeMounts:
           - name: cloudsql-instance-credentials

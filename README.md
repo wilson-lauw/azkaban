@@ -78,20 +78,20 @@ The service account need to these role:
 We assume the GKE cluster name is `azkaban` and the cloudSQL instanceID is `azkaban-db`, both are on zone `asia-east1-a`.
 Otherwise, you can change it in `sync_exec.py` and files in `yaml/`. 
 Things that you may need to change:
-- Project ID: `[project-id]` (you can find and replace all)
+- Project ID: `[product-id]` (you can find and replace all)
 - Image tag: `[image-tag]`
 - Azkaban config on `conf/`
 
 ```
 ./gradlew clean build installDist
 
-docker build -t gcr.io/[project-id]/azkaban-sync:[image-tag] -f Dockerfile-sync .
-docker build -t gcr.io/[project-id]/azkaban-exec:[image-tag] -f Dockerfile-exec .
-docker build -t gcr.io/[project-id]/azkaban-web:[image-tag] -f Dockerfile-web .
+docker build -t gcr.io/[product-id]/azkaban-sync:[image-tag] -f Dockerfile-sync .
+docker build -t gcr.io/[product-id]/azkaban-exec:[image-tag] -f Dockerfile-exec .
+docker build -t gcr.io/[product-id]/azkaban-web:[image-tag] -f Dockerfile-web .
 
-gcloud docker -- push gcr.io/[project-id]/azkaban-sync:[image-tag]
-gcloud docker -- push gcr.io/[project-id]/azkaban-exec:[image-tag]
-gcloud docker -- push gcr.io/[project-id]/azkaban-web:[image-tag]
+gcloud docker -- push gcr.io/[product-id]/azkaban-sync:[image-tag]
+gcloud docker -- push gcr.io/[product-id]/azkaban-exec:[image-tag]
+gcloud docker -- push gcr.io/[product-id]/azkaban-web:[image-tag]
 
 kubectl apply -f yaml/
 ```

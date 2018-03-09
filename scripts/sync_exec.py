@@ -7,6 +7,7 @@ from wait_for_port_ready import wait_for_port_ready
 import time
 import requests
 import traceback
+import sys
 
 def check_exec_pods_stability():
     cmd = 'kubectl get po -o wide|grep exec|grep 2/2|grep Running|wc -l'
@@ -21,7 +22,7 @@ def check_exec_pods_stability():
 # activate service account and kubectl
 cmd = 'gcloud auth activate-service-account --key-file=/secrets/cloudsql/credentials.json'
 print check_output(cmd, shell=True)
-cmd = 'gcloud container clusters get-credentials azkaban --zone asia-east1-a --project [project-id]'
+cmd = 'gcloud container clusters get-credentials azkaban --zone asia-east1-a --project [product-id]'
 print check_output(cmd, shell=True)
 
 wait_for_port_ready(3306, 15)
@@ -42,16 +43,16 @@ while True:
 
         start = time.time()
 
-        cmd = 'cat /azkaban-web-server/common/conf/azkaban.properties|grep mysql.host'
+        cmd = 'cat /common/conf/azkaban.properties|grep mysql.host'
         host = check_output(cmd, shell=True).replace('mysql.host=','').rstrip()
 
-        cmd = 'cat /azkaban-web-server/common/conf/azkaban.properties|grep mysql.database'
+        cmd = 'cat /common/conf/azkaban.properties|grep mysql.database'
         db = check_output(cmd, shell=True).replace('mysql.database=','').rstrip()
 
-        cmd = 'cat /azkaban-web-server/common/conf/azkaban.properties|grep mysql.user'
+        cmd = 'cat /common/conf/azkaban.properties|grep mysql.user'
         user = check_output(cmd, shell=True).replace('mysql.user=','').rstrip()
 
-        cmd = 'cat /azkaban-web-server/common/conf/azkaban.properties|grep mysql.password'
+        cmd = 'cat /common/conf/azkaban.properties|grep mysql.password'
         passwd = check_output(cmd, shell=True).replace('mysql.password=','').rstrip()
 
         # grab executors list from db
@@ -115,8 +116,10 @@ while True:
 
         end = time.time()
         print('Elapsed: ' + str((end-start) * 1000) + ' ms')
+        sys.stdout.flush()
 
     except Exception as ex:
         print(traceback.format_exc())
+        sys.stdout.flush()
 
     time.sleep(60)
