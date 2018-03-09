@@ -18,7 +18,7 @@ print check_output(cmd, shell=True)
 cmd = 'gcloud container clusters get-credentials azkaban --zone asia-east1-a --project [project-id]'
 print check_output(cmd, shell=True)
 
-wait_for_port_ready(3306, 5, 3)
+wait_for_port_ready(3306, 15)
 
 # wait for pods are stable
 def check_exec_pods_stability():
