@@ -71,7 +71,7 @@ Kubernetes resource requests specified here requires minimum n1-standard-8 and k
 ## Deployments on GKE
 Configure your gcloud account and install docker first. 
 Also, follow the guide [here](https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine) on creating secretes on kubernetes.
-The service account need to these role:
+The service account need to have these role:
 - `Cloud SQL Client`
 - `Kubernetes Engine Developer`
  
