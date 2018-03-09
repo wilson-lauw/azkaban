@@ -7,4 +7,4 @@ RUN chmod +x /scripts/*
 RUN apt-get install -y python-dev libmysqlclient-dev kubectl
 RUN pip install requests mysqlclient
 
-CMD "tail -f /dev/null"
+CMD /scripts/sync_exec.py
