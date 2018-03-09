@@ -12,10 +12,10 @@ def wait_for_port_ready(port, retry_count):
     retries = 0
     while not ready:
         if result == 0:
-            print 'Port is open'
+            print 'Port ' + str(port) + ' is open'
             ready = True
         else:
-            print 'Port is not open'
+            print 'Port ' + str(port) + ' is not open'
             retries += 1
             if retries > retry_count:
                 sys.exit(1)
