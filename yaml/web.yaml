@@ -49,6 +49,12 @@ spec:
         volumeMounts:
           - name: tmp-pod
             mountPath: /tmp/pod
+      - name: sync
+        image: gcr.io/[project-id]/azkaban-sync:[image-tag]
+        volumeMounts:
+          - name: cloudsql-instance-credentials
+            mountPath: /secrets/cloudsql
+            readOnly: true
       - name: cloudsql-proxy
         image: gcr.io/cloudsql-docker/gce-proxy:1.11
         command: ["/cloud_sql_proxy",
