@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: gcr.io/[product-id]/azkaban-web:[image-tag]
+        image: gcr.io/[project-id]/azkaban-web:[image-tag]
         ports:
         - containerPort: 8081
         resources:
@@ -50,7 +50,7 @@ spec:
           - name: tmp-pod
             mountPath: /tmp/pod
       - name: sync
-        image: gcr.io/[product-id]/azkaban-sync:[image-tag]
+        image: gcr.io/[project-id]/azkaban-sync:[image-tag]
         volumeMounts:
           - name: cloudsql-instance-credentials
             mountPath: /secrets/cloudsql
@@ -58,7 +58,7 @@ spec:
       - name: cloudsql-proxy
         image: gcr.io/cloudsql-docker/gce-proxy:1.11
         command: ["/cloud_sql_proxy",
-                  "-instances=[product-id]:asia-east1:azkaban-db=tcp:3306",
+                  "-instances=[project-id]:asia-east1:azkaban-db=tcp:3306",
                   "-credential_file=/secrets/cloudsql/credentials.json"]
         volumeMounts:
           - name: cloudsql-instance-credentials

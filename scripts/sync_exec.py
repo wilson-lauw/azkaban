@@ -22,7 +22,7 @@ def check_exec_pods_stability():
 # activate service account and kubectl
 cmd = 'gcloud auth activate-service-account --key-file=/secrets/cloudsql/credentials.json'
 print check_output(cmd, shell=True)
-cmd = 'gcloud container clusters get-credentials azkaban --zone asia-east1-a --project [product-id]'
+cmd = 'gcloud container clusters get-credentials azkaban --zone asia-east1-a --project [project-id]'
 print check_output(cmd, shell=True)
 
 wait_for_port_ready(3306, 15)
