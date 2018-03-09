@@ -83,6 +83,9 @@ Things that you may need to change:
 - Azkaban config on `conf/`
 
 ```
+./gradlew test
+./gradlew installDist
+
 docker build -t gcr.io/[project-id]/azkaban-sync:[image-tag] -f Dockerfile-sync .
 docker build -t gcr.io/[project-id]/azkaban-exec:[image-tag] -f Dockerfile-exec .
 docker build -t gcr.io/[project-id]/azkaban-web:[image-tag] -f Dockerfile-web .
