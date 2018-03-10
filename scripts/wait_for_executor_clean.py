@@ -21,8 +21,10 @@ while not clean:
     else:
         print 'numberOfAssignedFlows: ' + str(result)
         retries += 1
-        if retries > 60:
+        if retries > 600:
             sys.exit(1)
-        print 'waiting for 10 seconds...'
-        time.sleep(10)
+        print 'waiting for 1 seconds...'
+        time.sleep(1)
         result = get_num_assigned_flow()
+        
+time.sleep(10)
