@@ -7,7 +7,7 @@ import time
 URL = 'http://localhost:12321/serverStatistics'
 
 def get_num_assigned_flow():
-    resp = requests.get(URL)
+    resp = requests.get(URL, timeout=5)
     return int(resp.json()['numberOfAssignedFlows'])
 
 result = get_num_assigned_flow()
