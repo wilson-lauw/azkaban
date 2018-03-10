@@ -97,7 +97,7 @@ while True:
 
         # grab executors from web server
         URL = 'http://web.default.svc.cluster.local/status'
-        resp = requests.get(URL)
+        resp = requests.get(URL, timeout=5)
         executorStatusMap = resp.json()['executorStatusMap']
         registered_executors = []
 
