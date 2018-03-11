@@ -4,6 +4,7 @@ import socket
 import requests
 import time
 import urllib
+from subprocess import check_output
 
 URL = 'http://localhost:12321/serverStatistics'
 web_url = 'http://web.default.svc.cluster.local'
@@ -37,6 +38,9 @@ def get_running_flows_from_web(this_executor_id, cookies):
     return flows
 
 start = time.time()
+
+cmd = 'cat /yaml/exec.yaml|grep terminationGracePeriodSeconds'
+grace_period = int(check_output(cmd, shell=True).replace('terminationGracePeriodSeconds:','').rstrip().lstrip())
 
 result = get_num_assigned_flow()
 clean = False
