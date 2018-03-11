@@ -54,14 +54,14 @@ while not clean:
     else:
         print 'numberOfAssignedFlows: ' + str(result)
         retries += 1
-        if retries > 10800 - 600:
+        if retries > grace_period - 600:
             break
         print 'waiting for 1 seconds...'
         time.sleep(1)
         result = get_num_assigned_flow()
         now = time.time()
         elapsed = now - start
-        remaining_time = 10800 - 600 - elapsed
+        remaining_time = grace_period - 600 - elapsed
         if remaining_time <= result * 2:
             break
 
