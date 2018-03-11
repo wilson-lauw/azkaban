@@ -80,7 +80,7 @@ spec:
           preStop:
             exec:
               command: ["/bin/sh", "-c", "while true; do if [ -f /tmp/pod/main-terminated ]; then exit 0; fi; sleep 1; done"]
-      terminationGracePeriodSeconds: 600
+      terminationGracePeriodSeconds: 10800
       volumes:
         - name: cloudsql-instance-credentials
           secret:

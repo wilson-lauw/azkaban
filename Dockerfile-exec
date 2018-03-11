@@ -9,6 +9,7 @@ ADD azkaban-exec-server/build/install/azkaban-exec-server /azkaban-exec-server
 ADD common /azkaban-exec-server
 ADD scripts /scripts
 RUN chmod +x /scripts/*
+ADD yaml /yaml
 
 ENV AZKABAN_OPTS -Xmx3G -Xms3G -XX:+UseParNewGC -XX:+UseConcMarkSweepGC \
                  -XX:CMSInitiatingOccupancyFraction=70 -XX:+CMSParallelRemarkEnabled -XX:ReservedCodeCacheSize=256m
