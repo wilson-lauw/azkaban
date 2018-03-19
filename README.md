@@ -77,7 +77,8 @@ The service account need to have these role:
  
 We assume the GKE cluster name is `azkaban` and the cloudSQL instanceID is `azkaban-db`, both are on zone `asia-east1-a`.
 Otherwise, you can change it in `sync_exec.py` and files in `yaml/`. 
-Things that you may need to change:
+
+Things that you need to change:
 - Project ID: `[project-id]` (you can find and replace all)
 - Image tag: `[image-tag]`
 - Azkaban config on `conf/`
