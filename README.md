@@ -74,13 +74,13 @@ Also, follow the guide [here](https://cloud.google.com/sql/docs/mysql/connect-ku
 The service account need to have these role:
 - `Cloud SQL Client`
 - `Kubernetes Engine Developer`
- 
-We assume the GKE cluster name is `azkaban` and the cloudSQL instanceID is `azkaban-db`, both are on zone `asia-east1-a`.
-Otherwise, you can change it in `sync_exec.py` and files in `yaml/`. 
 
 Things that you need to change:
 - Project ID: `[project-id]` (you can find and replace all)
 - Image tag: `[image-tag]`
+- GKE cluster name: `azkaban-cluster`
+- CloudSQL instance: `azkaban-mysql-db`
+- Zone for GKE and CloudSQL: `asia-east1-a`
 - Azkaban config on `conf/`
 
 ```
