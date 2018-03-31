@@ -1,0 +1,10 @@
+FROM google/cloud-sdk:slim
+
+WORKDIR /scripts
+ADD common /common
+ADD scripts /scripts
+RUN chmod +x /scripts/*
+RUN apt-get install -y python-dev libmysqlclient-dev kubectl
+RUN pip install requests mysqlclient
+
+CMD /scripts/sync_exec.py
