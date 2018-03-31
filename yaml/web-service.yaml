@@ -3,10 +3,11 @@ apiVersion: v1
 metadata:
   name: web
 spec:
+  type: ClusterIP
   selector:
     app: web
   ports:
   - protocol: TCP
     port: 80
     targetPort: 8081
-  type: NodePort
+
