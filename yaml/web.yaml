@@ -20,7 +20,7 @@ spec:
         - containerPort: 8081
         resources:
           requests:
-            memory: "10G"
+            memory: "20G"
             cpu: "6000m"
         livenessProbe:
           failureThreshold: 5
