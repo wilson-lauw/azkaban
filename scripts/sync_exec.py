@@ -88,12 +88,12 @@ while True:
                 sql = 'INSERT INTO executors (host, port, active) VALUES ' + ','.join(values)
                 mysql_util.mysql_execute(sql, host, user, passwd, db)
 
-            # reload executors
-            print 'reload executors after db sync'
-            reload_exec(True)
-
         else:
             print 'executors list consistent'
+
+        # reload executors
+        print 'reload executors..'
+        reload_exec(True)
 
         # grab executors from web server
         URL = 'http://web.default.svc.cluster.local/status'
@@ -109,7 +109,7 @@ while True:
         print registered_executors
 
         if registered_executors != executors_in_kube:
-            print 'reload executors'
+            print 'second layer reload executors...'
             reload_exec(True)
 
         else:
