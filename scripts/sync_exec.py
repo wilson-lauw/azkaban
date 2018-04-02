@@ -63,7 +63,7 @@ while True:
         for row in from_db:
             executors_in_db.append(row['host'])
         executors_in_db = set(executors_in_db)
-        print executors_in_db
+        print 'executors_in_db:', executors_in_db
 
         # grab executors list from kubectl
         cmd = "kubectl get po -o wide|grep exec|grep 2/2|grep Running|awk '{print $6}'"
@@ -73,7 +73,7 @@ while True:
         for r in result:
             executors_in_kube.append(r)
         executors_in_kube = set(executors_in_kube)
-        print executors_in_kube
+        print 'executors_in_kube:', executors_in_kube
 
         if executors_in_db != executors_in_kube:
             print 'executors list inconsistent..!!'
@@ -88,12 +88,12 @@ while True:
                 sql = 'INSERT INTO executors (host, port, active) VALUES ' + ','.join(values)
                 mysql_util.mysql_execute(sql, host, user, passwd, db)
 
-            # reload executors
-            print 'reload executors after db sync'
-            reload_exec(True)
-
         else:
             print 'executors list consistent'
+
+        # reload executors
+        print 'reload executors..'
+        reload_exec(True)
 
         # grab executors from web server
         URL = 'http://web.default.svc.cluster.local/status'
@@ -106,10 +106,10 @@ while True:
             registered_executors.append(host)
 
         registered_executors = set(registered_executors)
-        print registered_executors
+        print 'registered_executors:', registered_executors
 
         if registered_executors != executors_in_kube:
-            print 'reload executors'
+            print 'second layer reload executors...'
             reload_exec(True)
 
         else:
