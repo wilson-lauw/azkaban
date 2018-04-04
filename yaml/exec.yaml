@@ -19,7 +19,7 @@ spec:
         - containerPort: 12321
         resources:
           requests:
-            memory: "20G"
+            memory: "25G"
             cpu: "6000m"
         livenessProbe:
           failureThreshold: 5
@@ -60,6 +60,10 @@ spec:
           - name: tmp-pod
             mountPath: /tmp/pod
             readOnly: true
+        resources:
+          requests:
+            memory: "500M"
+            cpu: "200m"
         livenessProbe:
           failureThreshold: 5
           exec:

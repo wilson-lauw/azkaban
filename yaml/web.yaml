@@ -55,6 +55,10 @@ spec:
           - name: cloudsql-instance-credentials
             mountPath: /secrets/cloudsql
             readOnly: true
+        resources:
+          requests:
+            memory: "500M"
+            cpu: "200m"
       - name: cloudsql-proxy
         image: gcr.io/cloudsql-docker/gce-proxy:1.11
         command: ["/cloud_sql_proxy",
@@ -67,6 +71,10 @@ spec:
           - name: tmp-pod
             mountPath: /tmp/pod
             readOnly: true
+        resources:
+          requests:
+            memory: "500M"
+            cpu: "200m"
         livenessProbe:
           failureThreshold: 5
           exec:
