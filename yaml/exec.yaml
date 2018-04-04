@@ -60,6 +60,10 @@ spec:
           - name: tmp-pod
             mountPath: /tmp/pod
             readOnly: true
+        resources:
+          requests:
+            memory: "500M"
+            cpu: "200m"
         livenessProbe:
           failureThreshold: 5
           exec:

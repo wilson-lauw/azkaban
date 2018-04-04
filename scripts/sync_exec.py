@@ -32,6 +32,10 @@ while True:
     time.sleep(60)
     
     try:
+        # reload executors
+        print 'reload executors..'
+        reload_exec(True)
+
         # wait for pods are stable
         stable = check_exec_pods_stability()
         while not stable:
@@ -88,12 +92,12 @@ while True:
                 sql = 'INSERT INTO executors (host, port, active) VALUES ' + ','.join(values)
                 mysql_util.mysql_execute(sql, host, user, passwd, db)
 
+                # reload executors
+                print 'reload executors after db sync..'
+                reload_exec(True)
+
         else:
             print 'executors list consistent'
-
-        # reload executors
-        print 'reload executors..'
-        reload_exec(True)
 
         # grab executors from web server
         URL = 'http://web.default.svc.cluster.local/status'
