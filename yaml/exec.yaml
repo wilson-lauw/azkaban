@@ -19,7 +19,7 @@ spec:
         - containerPort: 12321
         resources:
           requests:
-            memory: "20G"
+            memory: "25G"
             cpu: "6000m"
         livenessProbe:
           failureThreshold: 5
