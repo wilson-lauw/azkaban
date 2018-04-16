@@ -58,15 +58,6 @@ Kubernetes resource requests specified here requires minimum n1-standard-8 and k
   - we use cloudsql proxy to connect to cloudsql instance
 - added example job generation script using https://github.com/mtth/azkaban
   - `jobs.py`
-- added executor randomizer in case of tie score
-  - `azkaban-common/src/main/java/azkaban/executor/selector/CandidateComparator.java`
-  - `azkaban-common/src/main/java/azkaban/executor/selector/CandidateSelector.java`
-- small cosmetic
-  - `azkaban-web-server/src/main/resources/azkaban/webapp/servlet/velocity/nav.vm`
-- modified to use internal IP instead of hostname
-  - `azkaban-exec-server/src/main/java/azkaban/execapp/AzkabanExecutorServer.java`
-- reduce refresh interval for the UI
-  - `azkaban-web-server/src/web/js/azkaban/view/exflow.js`
 
 ## Deployments on GKE
 Configure your gcloud account and install docker first. 
