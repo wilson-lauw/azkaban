@@ -27,5 +27,7 @@ temp/
 # Intellij default build output directory
 out/
 
+currentpid
+
 result.zip
 *.pyc

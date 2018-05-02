@@ -72,7 +72,7 @@ import org.slf4j.LoggerFactory;
 public class FlowTriggerService {
 
   private static final Duration CANCELLING_GRACE_PERIOD_AFTER_RESTART = Duration.ofMinutes(1);
-  private static final int RECENTLY_FINISHED_TRIGGER_LIMIT = 20;
+  private static final int RECENTLY_FINISHED_TRIGGER_LIMIT = 50;
   private static final int CANCEL_EXECUTOR_POOL_SIZE = 32;
   private static final Logger logger = LoggerFactory.getLogger(FlowTriggerService.class);
   private final ExecutorService singleThreadExecutorService;
@@ -83,11 +83,13 @@ public class FlowTriggerService {
   private final TriggerInstanceProcessor triggerProcessor;
   private final FlowTriggerInstanceLoader flowTriggerInstanceLoader;
   private final DependencyInstanceProcessor dependencyProcessor;
+  private final FlowTriggerExecutionCleaner cleaner;
 
   @Inject
   public FlowTriggerService(final FlowTriggerDependencyPluginManager pluginManager,
       final TriggerInstanceProcessor triggerProcessor, final DependencyInstanceProcessor
-      dependencyProcessor, final FlowTriggerInstanceLoader flowTriggerInstanceLoader) {
+      dependencyProcessor, final FlowTriggerInstanceLoader flowTriggerInstanceLoader,
+      final FlowTriggerExecutionCleaner cleaner) {
     // Give the thread a name to make debugging easier.
     final ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
         .setNameFormat("FlowTrigger-service").build();
@@ -100,11 +102,13 @@ public class FlowTriggerService {
     this.triggerProcessor = triggerProcessor;
     this.dependencyProcessor = dependencyProcessor;
     this.flowTriggerInstanceLoader = flowTriggerInstanceLoader;
+    this.cleaner = cleaner;
   }
 
   public void start() throws FlowTriggerDependencyPluginException {
     this.triggerPluginManager.loadAllPlugins();
     this.recoverIncompleteTriggerInstances();
+    this.cleaner.start();
   }
 
   private DependencyInstanceContext createDepContext(final FlowTriggerDependency dep, final long
@@ -189,6 +193,10 @@ public class FlowTriggerService {
     return this.flowTriggerInstanceLoader.getTriggerInstanceById(triggerInstanceId);
   }
 
+  public TriggerInstance findTriggerInstanceByExecId(final int flowExecId) {
+    return this.flowTriggerInstanceLoader.getTriggerInstanceByFlowExecId(flowExecId);
+  }
+
   private boolean isDoneButFlowNotExecuted(final TriggerInstance triggerInstance) {
     return triggerInstance.getStatus() == Status.SUCCEEDED && triggerInstance.getFlowExecId() ==
         Constants.UNASSIGNED_EXEC_ID;
@@ -248,13 +256,34 @@ public class FlowTriggerService {
   public void recoverIncompleteTriggerInstances() {
     final Collection<TriggerInstance> unfinishedTriggerInstances = this.flowTriggerInstanceLoader
         .getIncompleteTriggerInstances();
-    //todo chengren311: what if flow trigger is not found?
     for (final TriggerInstance triggerInstance : unfinishedTriggerInstances) {
       if (triggerInstance.getFlowTrigger() != null) {
         recover(triggerInstance);
       } else {
-        logger.error(String.format("cannot recover the trigger instance %s, flow trigger is null ",
-            triggerInstance.getId()));
+        logger.error(String.format("cannot recover the trigger instance %s, flow trigger is null,"
+            + " cancelling it ", triggerInstance.getId()));
+
+        //finalize unrecoverable trigger instances
+        // the following situation would cause trigger instances unrecoverable:
+        // 1. project A with flow A associated with flow trigger A is uploaded
+        // 2. flow trigger A starts to run
+        // 3. project A with flow B without any flow trigger is uploaded
+        // 4. web server restarts
+        // in this case, flow trigger instance of flow trigger A will be equipped with latest
+        // project, thus failing to find the flow trigger since new project doesn't contain flow
+        // trigger at all
+        if (isDoneButFlowNotExecuted(triggerInstance)) {
+          triggerInstance.setFlowExecId(Constants.FAILED_EXEC_ID);
+          this.flowTriggerInstanceLoader.updateAssociatedFlowExecId(triggerInstance);
+        } else {
+          for (final DependencyInstance depInst : triggerInstance.getDepInstances()) {
+            if (!Status.isDone(depInst.getStatus())) {
+              processStatusAndCancelCauseUpdate(depInst, Status.CANCELLED,
+                  CancellationCause.FAILURE);
+              this.triggerProcessor.processTermination(depInst.getTriggerInstance());
+            }
+          }
+        }
       }
     }
   }
@@ -516,6 +545,14 @@ public class FlowTriggerService {
     this.singleThreadExecutorService.shutdownNow(); // Cancel currently executing tasks
     this.multiThreadsExecutorService.shutdown();
     this.multiThreadsExecutorService.shutdownNow();
+
+    this.triggerProcessor.shutdown();
     this.triggerPluginManager.shutdown();
+    this.cleaner.shutdown();
+  }
+
+  public Collection<TriggerInstance> getTriggerInstances(final int projectId, final String flowId,
+      final int from, final int length) {
+    return this.flowTriggerInstanceLoader.getTriggerInstances(projectId, flowId, from, length);
   }
 }
