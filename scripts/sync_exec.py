@@ -25,7 +25,7 @@ def clean_evicted_pods():
     result = filter(lambda l:len(l) > 0, result)
     for r in result:
         print 'cleaning pod', r
-        cmd = 'kubectl describe po ' + r
+        cmd = 'kubectl delete po ' + r
         print check_output(cmd, shell=True)
     
     
