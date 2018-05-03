@@ -13,7 +13,7 @@ def check_exec_pods_stability():
     cmd = 'kubectl get po -o wide|grep exec|grep 2/2|grep Running|wc -l'
     num_stable_pods = int(check_output(cmd, shell=True))
 
-    cmd = 'kubectl get po -o wide|grep exec|wc -l'
+    cmd = 'kubectl get po -o wide|grep exec|grep -v Evicted|wc -l'
     num_all_pods = int(check_output(cmd, shell=True))
 
     stable = num_stable_pods == num_all_pods
