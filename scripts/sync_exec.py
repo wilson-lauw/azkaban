@@ -19,6 +19,16 @@ def check_exec_pods_stability():
     stable = num_stable_pods == num_all_pods
     return stable
 
+def clean_evicted_pods():
+    cmd = "kubectl get po -a|grep Evicted|awk '{print $1}'"
+    result = check_output(cmd, shell=True).split('\n')
+    result = filter(lambda l:len(l) > 0, result)
+    for r in result:
+        print 'cleaning pod', r
+        cmd = 'kubectl describe po ' + r
+        print check_output(cmd, shell=True)
+    
+    
 # activate service account and kubectl
 cmd = 'gcloud auth activate-service-account --key-file=/secrets/cloudsql/credentials.json'
 print check_output(cmd, shell=True)
@@ -35,6 +45,9 @@ while True:
         # reload executors
         print 'reload executors..'
         reload_exec(True)
+
+        print 'cleaning evicted pods..'
+        clean_evicted_pods()
 
         # wait for pods are stable
         stable = check_exec_pods_stability()
