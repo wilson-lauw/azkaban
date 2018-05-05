@@ -1,0 +1,29 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: kube-dns
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      k8s-app: kube-dns
+---
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: heapster
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      k8s-app: heapster
+---
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: metrics-server
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      k8s-app: metrics-server

@@ -87,6 +87,11 @@ gcloud docker -- push gcr.io/[project-id]/azkaban-web:[image-tag]
 
 kubectl apply -f yaml/
 ```
+
+Optional: set PDB for more efficient cluster scaling
+```
+kubectl apply -n kube-system -f yaml/kube-system/pdb.yaml
+```
 Connect to web UI via webproxy
 ```
 ./webproxy.sh
