@@ -71,7 +71,7 @@ Things that you need to change:
 - Image tag: `[image-tag]`
 - GKE cluster name: `azkaban-cluster`
 - CloudSQL instance: `azkaban-mysql-db`
-- Zone for GKE and CloudSQL: `asia-east1-a`
+- Zone for GKE and CloudSQL: `asia-southeast1-a`
 - Azkaban config on `conf/`
 
 ```

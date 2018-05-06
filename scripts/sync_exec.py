@@ -32,7 +32,7 @@ def clean_evicted_pods():
 # activate service account and kubectl
 cmd = 'gcloud auth activate-service-account --key-file=/secrets/cloudsql/credentials.json'
 print check_output(cmd, shell=True)
-cmd = 'gcloud container clusters get-credentials azkaban-cluster --zone asia-east1-a --project [project-id]'
+cmd = 'gcloud container clusters get-credentials azkaban-cluster --zone asia-southeast1-a --project [project-id]'
 print check_output(cmd, shell=True)
 
 wait_for_port_ready(3306, 15)
