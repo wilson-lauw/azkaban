@@ -70,7 +70,7 @@ Things that you need to change:
 - Project ID: `[project-id]` (you can find and replace all)
 - Image tag: `[image-tag]`
 - GKE cluster name: `azkaban-cluster`
-- CloudSQL instance: `azkaban-mysql-db`
+- CloudSQL instance: `azkaban-db`
 - Zone for GKE and CloudSQL: `asia-southeast1-a`
 - Azkaban config on `conf/`
 
