@@ -1,7 +1,5 @@
 FROM java:8-jre
 
-RUN rm /etc/apt/sources.list.d/jessie-backports.list
-RUN sed -i '/jessie-updates/d' /etc/apt/sources.list
 RUN apt-get update
 RUN apt-get install -y python
 RUN apt-get install -y python-pip

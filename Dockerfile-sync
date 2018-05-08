@@ -4,7 +4,6 @@ WORKDIR /scripts
 ADD common /common
 ADD scripts /scripts
 RUN chmod +x /scripts/*
-RUN sed -i '/jessie-updates/d' /etc/apt/sources.list
 RUN apt-get update
 RUN apt-get install -y python-dev libmysqlclient-dev kubectl
 RUN pip install requests mysqlclient
