@@ -57,3 +57,13 @@ spec:
   selector:
     matchLabels:
       k8s-app: kube-dns-autoscaler
+---
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: glbc
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      k8s-app: glbc
