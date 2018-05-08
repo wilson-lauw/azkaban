@@ -27,3 +27,33 @@ spec:
   selector:
     matchLabels:
       k8s-app: metrics-server
+---
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: event-exporter
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      k8s-app: event-exporter
+---
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: kubernetes-dashboard
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      k8s-app: kubernetes-dashboard
+---
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: kube-dns-autoscaler
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      k8s-app: kube-dns-autoscaler
