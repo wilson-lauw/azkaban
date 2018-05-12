@@ -36,7 +36,7 @@ cmd = 'gcloud container clusters get-credentials azkaban-cluster --zone asia-sou
 print check_output(cmd, shell=True)
 
 wait_for_port_ready(3306, 15)
-wait_for_port_ready(8081, 15)
+wait_for_port_ready(8081, 45)
 
 while True:
     time.sleep(60)
