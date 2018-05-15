@@ -43,7 +43,7 @@ def mysql_fetch(sql,host,user,passwd,db,dictCursor=True):
             print(traceback.format_exc())
             time.sleep(retries_interval)
 
-    sys.exit(1)
+    raise Exception('MySQL fetch failed')
 
 def mysql_execute(sql,host,user,passwd,db):
     success = False
@@ -75,4 +75,4 @@ def mysql_execute(sql,host,user,passwd,db):
             time.sleep(retries_interval)
 
     if not success:
-        sys.exit(1)
+        raise Exception('MySQL fetch failed')

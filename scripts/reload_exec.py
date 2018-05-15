@@ -42,9 +42,11 @@ def reload_exec(local=False):
             
             retries += 1
             if retries > retry_count:
-                sys.exit(1)
+                return success
             print 'waiting for 1 seconds...'
             time.sleep(1)
+
+    return success
 
 
 if __name__ == "__main__":

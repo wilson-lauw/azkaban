@@ -18,7 +18,7 @@ def wait_for_port_ready(port, retry_count):
             print 'Port ' + str(port) + ' is not open'
             retries += 1
             if retries > retry_count:
-                sys.exit(1)
+                raise Exception('Port ' + str(port) + ' is not open')
             print 'waiting for 1 seconds...'
             time.sleep(1)
             result = sock.connect_ex(('127.0.0.1', port))

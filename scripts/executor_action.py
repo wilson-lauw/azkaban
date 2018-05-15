@@ -36,6 +36,6 @@ while not success:
 
         retries += 1
         if retries > retry_count:
-            sys.exit(1)
+            raise Exception('Attempt to ' + action + ' executor failed')
         print 'waiting for 1 seconds...'
         time.sleep(1)
