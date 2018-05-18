@@ -28,3 +28,6 @@ temp/
 out/
 
 currentpid
+
+result.zip
+*.pyc
