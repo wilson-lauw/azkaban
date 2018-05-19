@@ -1,0 +1,19 @@
+FROM java:8-jre
+
+RUN rm /etc/apt/sources.list.d/jessie-backports.list
+RUN apt-get update
+RUN apt-get install -y python
+RUN apt-get install -y python-pip
+WORKDIR /azkaban-exec-server
+ADD azkaban-exec-server/build/install/azkaban-exec-server /azkaban-exec-server
+ADD common /azkaban-exec-server
+ADD scripts /scripts
+RUN chmod +x /scripts/*
+ADD yaml /yaml
+
+ENV AZKABAN_OPTS -Xmx8G -Xms8G -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+ParallelRefProcEnabled \
+                 -XX:-ResizePLAB -XX:ParallelGCThreads=6 -XX:ConcGCThreads=6 -XX:G1HeapWastePercent=20 \
+                 -XX:InitiatingHeapOccupancyPercent=75
+EXPOSE 12321
+
+CMD /scripts/start-exec.sh
