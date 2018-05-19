@@ -1,7 +1,8 @@
 FROM openjdk:8-jre-stretch
 
 RUN apt-get update
-RUN apt-get install -y python procps apt-utils
+RUN apt-get install -y procps apt-utils dialog
+RUN apt-get install -y python
 RUN apt-get install -y python-pip
 WORKDIR /azkaban-exec-server
 ADD azkaban-exec-server/build/install/azkaban-exec-server /azkaban-exec-server
