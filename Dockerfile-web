@@ -7,6 +7,7 @@ RUN pip install requests==2.18.4
 WORKDIR /azkaban-web-server
 ADD azkaban-web-server/build/install/azkaban-web-server /azkaban-web-server
 ADD common /azkaban-web-server
+ADD common /common
 ADD scripts /scripts
 RUN chmod +x /scripts/*
 
