@@ -4,6 +4,7 @@ import requests
 import sys
 import time
 from wait_for_port_ready import wait_for_port_ready
+from get_azk_creds import get_password
 import traceback
 
 def reload_exec(local=False):
@@ -17,7 +18,7 @@ def reload_exec(local=False):
             if local:
                 url = 'http://localhost:8081'
                 wait_for_port_ready(8081, 15)
-            payload = {'action': 'login', 'username': 'admin', 'password': 'admin'}
+            payload = {'action': 'login', 'username': 'admin', 'password': get_password('admin')}
 
             r = requests.post(url, data=payload, timeout=5)
             print r.status_code

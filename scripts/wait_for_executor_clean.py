@@ -5,6 +5,7 @@ import requests
 import time
 import urllib
 from subprocess import check_output
+from get_azk_creds import get_password
 
 URL = 'http://localhost:12321/serverStatistics'
 web_url = 'http://web.default.svc.cluster.local'
@@ -71,7 +72,7 @@ if not clean:
     resp = requests.get(url, timeout=5)
     this_executor_id = int(resp.json()['executor_id'])
 
-    payload = {'action': 'login', 'username': 'admin', 'password': 'admin'}
+    payload = {'action': 'login', 'username': 'admin', 'password': get_password('admin')}
     r = requests.post(web_url, data=payload, timeout=5)
     print r.status_code
     print r.text
