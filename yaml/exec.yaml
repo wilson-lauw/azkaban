@@ -23,20 +23,16 @@ spec:
             cpu: "6000m"
         livenessProbe:
           failureThreshold: 5
-          httpGet:
-            path: /stats
-            port: 12321
-            scheme: HTTP
+          exec:
+            command: ["/scripts/executor_action.py", "activate"]
           initialDelaySeconds: 5
           periodSeconds: 5
           successThreshold: 1
           timeoutSeconds: 10
         readinessProbe:  
           failureThreshold: 5
-          httpGet:
-            path: /stats
-            port: 12321
-            scheme: HTTP
+          exec:
+            command: ["/scripts/executor_action.py", "activate"]
           initialDelaySeconds: 5
           periodSeconds: 5
           successThreshold: 1
