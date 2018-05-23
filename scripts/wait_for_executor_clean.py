@@ -11,7 +11,7 @@ URL = 'http://localhost:12321/serverStatistics'
 web_url = 'http://web.default.svc.cluster.local'
 
 def get_num_assigned_flow():
-    resp = requests.get(URL, timeout=5)
+    resp = requests.post(URL, timeout=5)
     return int(resp.json()['numberOfAssignedFlows'])
 
 def get_running_flows_from_web(this_executor_id, cookies):
@@ -69,7 +69,7 @@ while not clean:
 if not clean:
     ## check for flows that are still running and kill it
     url = 'http://localhost:12321/executor?action=getStatus'
-    resp = requests.get(url, timeout=5)
+    resp = requests.post(url, timeout=5)
     this_executor_id = int(resp.json()['executor_id'])
 
     payload = {'action': 'login', 'username': 'admin', 'password': get_password('admin')}
