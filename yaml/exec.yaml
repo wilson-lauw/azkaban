@@ -24,7 +24,7 @@ spec:
         livenessProbe:
           failureThreshold: 5
           exec:
-            command: ["/scripts/executor_action.py", "activate"]
+            command: ["/scripts/executor_action.py", "getStatus"]
           initialDelaySeconds: 5
           periodSeconds: 5
           successThreshold: 1
@@ -32,7 +32,7 @@ spec:
         readinessProbe:  
           failureThreshold: 5
           exec:
-            command: ["/scripts/executor_action.py", "activate"]
+            command: ["/scripts/executor_action.py", "getStatus"]
           initialDelaySeconds: 5
           periodSeconds: 5
           successThreshold: 1
