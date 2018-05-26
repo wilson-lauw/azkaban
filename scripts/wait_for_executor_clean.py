@@ -4,7 +4,7 @@ import socket
 import requests
 import time
 import urllib
-from subprocess import check_output
+from subprocess import getoutput
 from get_azk_creds import get_password
 
 URL = 'http://localhost:12321/serverStatistics'
@@ -41,7 +41,7 @@ def get_running_flows_from_web(this_executor_id, cookies):
 start = time.time()
 
 cmd = 'cat /yaml/exec.yaml|grep terminationGracePeriodSeconds'
-grace_period = int(check_output(cmd, shell=True).replace('terminationGracePeriodSeconds:','').rstrip().lstrip())
+grace_period = int(getoutput(cmd).replace('terminationGracePeriodSeconds:','').rstrip().lstrip())
 
 result = get_num_assigned_flow()
 clean = False

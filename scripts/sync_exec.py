@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from subprocess import check_output
+from subprocess import getoutput
 import mysql_util
 from reload_exec import reload_exec
 from wait_for_port_ready import wait_for_port_ready
@@ -11,29 +11,29 @@ import sys
 
 def check_exec_pods_stability():
     cmd = 'kubectl get po -o wide|grep exec|grep 2/2|grep Running|wc -l'
-    num_stable_pods = int(check_output(cmd, shell=True))
+    num_stable_pods = int(getoutput(cmd))
 
     cmd = 'kubectl get po -o wide|grep exec|grep -v Evicted|wc -l'
-    num_all_pods = int(check_output(cmd, shell=True))
+    num_all_pods = int(getoutput(cmd))
 
     stable = num_stable_pods == num_all_pods
     return stable
 
 def clean_evicted_pods():
     cmd = "kubectl get po -a|grep Evicted|awk '{print $1}'"
-    result = check_output(cmd, shell=True).split('\n')
+    result = getoutput(cmd).split('\n')
     result = filter(lambda l:len(l) > 0, result)
     for r in result:
         print('cleaning pod', r)
         cmd = 'kubectl delete po ' + r
-        print(check_output(cmd, shell=True))
+        print(getoutput(cmd))
     
     
 # activate service account and kubectl
 cmd = 'gcloud auth activate-service-account --key-file=/secrets/cloudsql/credentials.json'
-print(check_output(cmd, shell=True))
+print(getoutput(cmd))
 cmd = 'gcloud container clusters get-credentials azkaban-cluster --zone asia-southeast1-a --project [project-id]'
-print(check_output(cmd, shell=True))
+print(getoutput(cmd))
 
 wait_for_port_ready(3306, 15)
 wait_for_port_ready(8081, 45)
@@ -62,16 +62,16 @@ while True:
         start = time.time()
 
         cmd = 'cat /common/conf/azkaban.properties|grep mysql.host'
-        host = check_output(cmd, shell=True).replace('mysql.host=','').rstrip()
+        host = getoutput(cmd).replace('mysql.host=','').rstrip()
 
         cmd = 'cat /common/conf/azkaban.properties|grep mysql.database'
-        db = check_output(cmd, shell=True).replace('mysql.database=','').rstrip()
+        db = getoutput(cmd).replace('mysql.database=','').rstrip()
 
         cmd = 'cat /common/conf/azkaban.properties|grep mysql.user'
-        user = check_output(cmd, shell=True).replace('mysql.user=','').rstrip()
+        user = getoutput(cmd).replace('mysql.user=','').rstrip()
 
         cmd = 'cat /common/conf/azkaban.properties|grep mysql.password'
-        passwd = check_output(cmd, shell=True).replace('mysql.password=','').rstrip()
+        passwd = getoutput(cmd).replace('mysql.password=','').rstrip()
 
         # grab executors list from db
         sql = 'select host from executors'
@@ -84,7 +84,7 @@ while True:
 
         # grab executors list from kubectl
         cmd = "kubectl get po -o wide|grep exec|grep 2/2|grep Running|awk '{print $6}'"
-        result = check_output(cmd, shell=True).split('\n')
+        result = getoutput(cmd).split('\n')
         result = filter(lambda l:len(l) > 0, result)
         executors_in_kube = []
         for r in result:
