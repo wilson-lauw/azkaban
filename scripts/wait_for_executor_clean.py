@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import socket
 import requests
@@ -49,15 +49,15 @@ retries = 0
 
 while not clean:
     if result == 0:
-        print 'numberOfAssignedFlows: ' + str(result)
-        print 'Executor ' + socket.gethostbyname(socket.gethostname()) + ' clean'
+        print('numberOfAssignedFlows: ' + str(result))
+        print('Executor ' + socket.gethostbyname(socket.gethostname()) + ' clean')
         clean = True
     else:
-        print 'numberOfAssignedFlows: ' + str(result)
+        print('numberOfAssignedFlows: ' + str(result))
         retries += 1
         if retries > grace_period - 600:
             break
-        print 'waiting for 1 seconds...'
+        print('waiting for 1 seconds...')
         time.sleep(1)
         result = get_num_assigned_flow()
         now = time.time()
@@ -74,8 +74,8 @@ if not clean:
 
     payload = {'action': 'login', 'username': 'admin', 'password': get_password('admin')}
     r = requests.post(web_url, data=payload, timeout=5)
-    print r.status_code
-    print r.text
+    print(r.status_code)
+    print(r.text)
     session_id = r.json()['session.id']
     cookies = r.cookies
 
@@ -84,8 +84,8 @@ if not clean:
     # kill the flows
     for id in flows.keys():
         url = web_url + '/executor?ajax=cancelFlow&execid=' + str(id)
-        print 'killing execution id ' + str(id) + \
-                requests.get(url, cookies=cookies, timeout=5).text
+        print('killing execution id ' + str(id) + \
+                requests.get(url, cookies=cookies, timeout=5).text)
 
     # wait for executor clean
     result = len(get_running_flows_from_web(this_executor_id, cookies))
@@ -94,15 +94,15 @@ if not clean:
 
     while not clean:
         if result == 0:
-            print 'running flows: ' + str(result)
-            print 'Executor ' + socket.gethostbyname(socket.gethostname()) + ' clean'
+            print('running flows: ' + str(result))
+            print('Executor ' + socket.gethostbyname(socket.gethostname()) + ' clean')
             clean = True
         else:
-            print 'running flows: ' + str(result)
+            print('running flows: ' + str(result))
             retries += 1
             if retries > 10:
                 break
-            print 'waiting for 1 seconds...'
+            print('waiting for 1 seconds...')
             time.sleep(1)
             result = len(get_running_flows_from_web(this_executor_id, cookies))
 
@@ -111,7 +111,7 @@ if not clean:
     submit_second = []
     for id in flows.keys():
         url = web_url + '/executor?ajax=flowInfo&execid=' + str(id)
-        print 'getting flow info for execution id ' + str(id)
+        print('getting flow info for execution id ' + str(id))
         result = requests.get(url, cookies=cookies, timeout=5)
         flows[id]['info'] = result.json()
         if flows[id]['info']['concurrentOptions'] == 'skip':
@@ -152,9 +152,9 @@ if not clean:
             concurrentOption=execution_info['info']['concurrentOptions']
         )
         url = url.replace('\n','').replace(' ','') + flow_override
-        print url
+        print(url)
         result = requests.get(url, cookies=cookies, timeout=5)
-        print result.text
+        print(result.text)
     
 ## allow for notifications
 time.sleep(10)
