@@ -123,12 +123,12 @@ if not clean:
     for execution_id in submit_first + submit_second:
         execution_info = flows[execution_id]
         flow_override = []
-        for k,v in execution_info['info']['flowParam'].iteritems():
+        for k,v in execution_info['info']['flowParam'].items():
             flow_override.append(urllib.quote('flowOverride[{k}]'.format(k=k)) + \
                 '={v}'.format(v=v))
         flow_override = '&' + '&'.join(flow_override) if len(flow_override) > 0 else ''
         disabled = []
-        for k,v in execution_info['info']['nodeStatus'].iteritems():
+        for k,v in execution_info['info']['nodeStatus'].items():
             if v not in ('KILLED', 'CANCELLED'):
                 disabled.append(str(k))
         url = '''

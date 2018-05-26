@@ -118,7 +118,7 @@ while True:
         executorStatusMap = resp.json()['executorStatusMap']
         registered_executors = []
 
-        for id, execInfo in executorStatusMap.iteritems():
+        for id, execInfo in executorStatusMap.items():
             host = execInfo['host']
             registered_executors.append(host)
 
