@@ -45,25 +45,21 @@ grace_period = int(getoutput(cmd).replace('terminationGracePeriodSeconds:','').r
 
 result = get_num_assigned_flow()
 clean = False
-retries = 0
 
 while not clean:
     if result == 0:
-        print('numberOfAssignedFlows: ' + str(result))
+        print('numberOfAssignedFlows:', result)
         print('Executor ' + socket.gethostbyname(socket.gethostname()) + ' clean')
         clean = True
     else:
-        print('numberOfAssignedFlows: ' + str(result))
-        retries += 1
-        if retries > grace_period - 600:
-            break
+        print('numberOfAssignedFlows:', result)
         print('waiting for 1 seconds...')
         time.sleep(1)
         result = get_num_assigned_flow()
         now = time.time()
         elapsed = now - start
         remaining_time = grace_period - 600 - elapsed
-        if remaining_time <= result * 2:
+        if remaining_time <= result * 5:
             break
 
 if not clean:
