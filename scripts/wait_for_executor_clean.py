@@ -3,7 +3,7 @@
 import socket
 import requests
 import time
-import urllib
+import urllib.parse
 from subprocess import getoutput
 from get_azk_creds import get_password
 
@@ -120,7 +120,7 @@ if not clean:
         execution_info = flows[execution_id]
         flow_override = []
         for k,v in execution_info['info']['flowParam'].items():
-            flow_override.append(urllib.quote('flowOverride[{k}]'.format(k=k)) + \
+            flow_override.append(urllib.parse.quote('flowOverride[{k}]'.format(k=k)) + \
                 '={v}'.format(v=v))
         flow_override = '&' + '&'.join(flow_override) if len(flow_override) > 0 else ''
         disabled = []
@@ -137,12 +137,12 @@ if not clean:
             web_url=web_url,
             project = execution_info['project'],
             flow=execution_info['flow'],
-            disabled=urllib.quote(str(disabled).replace("'",'"')),
+            disabled=urllib.parse.quote(str(disabled).replace("'",'"')),
             failureEmailsOverride=execution_info['info']['failureEmailsOverride'],
             successEmailsOverride=execution_info['info']['successEmailsOverride'],
             failureAction=execution_info['info']['failureAction'],
-            failureEmails=urllib.quote_plus(','.join(execution_info['info']['failureEmails'])),
-            successEmails=urllib.quote_plus(','.join(execution_info['info']['successEmails'])),
+            failureEmails=urllib.parse.quote_plus(','.join(execution_info['info']['failureEmails'])),
+            successEmails=urllib.parse.quote_plus(','.join(execution_info['info']['successEmails'])),
             notifyFailureFirst=execution_info['info']['notifyFailureFirst'],
             notifyFailureLast=execution_info['info']['notifyFailureLast'],
             concurrentOption=execution_info['info']['concurrentOptions']
