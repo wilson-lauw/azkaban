@@ -20,7 +20,7 @@ def check_exec_pods_stability():
     return stable
 
 def clean_evicted_pods():
-    cmd = "kubectl get po -a|grep Evicted|awk '{print $1}'"
+    cmd = "kubectl get po|grep Evicted|awk '{print $1}'"
     result = getoutput(cmd).split('\n')
     result = filter(lambda l:len(l) > 0, result)
     for r in result:
