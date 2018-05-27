@@ -60,7 +60,7 @@ Kubernetes resource requests specified here requires minimum n1-standard-8 and k
   - `jobs.py`
 
 ## Deployments on GKE
-Configure your gcloud account and install docker first. 
+Configure your gcloud account and install docker first. Then use `gcloud auth configure-docker` to configure `docker` to use `gcloud` as a credential helper. 
 Also, follow the guide [here](https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine) on creating secrets on kubernetes.
 The service account need to have these role:
 - `Cloud SQL Client`
@@ -81,9 +81,9 @@ docker build -t gcr.io/[project-id]/azkaban-sync:[image-tag] -f Dockerfile-sync 
 docker build -t gcr.io/[project-id]/azkaban-exec:[image-tag] -f Dockerfile-exec .
 docker build -t gcr.io/[project-id]/azkaban-web:[image-tag] -f Dockerfile-web .
 
-gcloud docker -- push gcr.io/[project-id]/azkaban-sync:[image-tag]
-gcloud docker -- push gcr.io/[project-id]/azkaban-exec:[image-tag]
-gcloud docker -- push gcr.io/[project-id]/azkaban-web:[image-tag]
+docker push gcr.io/[project-id]/azkaban-sync:[image-tag]
+docker push gcr.io/[project-id]/azkaban-exec:[image-tag]
+docker push gcr.io/[project-id]/azkaban-web:[image-tag]
 
 kubectl apply -f yaml/
 ```
