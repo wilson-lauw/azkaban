@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import requests
 import sys
@@ -21,15 +21,15 @@ def reload_exec(local=False):
             payload = {'action': 'login', 'username': 'admin', 'password': get_password('admin')}
 
             r = requests.post(url, data=payload, timeout=5)
-            print r.status_code
-            print r.text
+            print(r.status_code)
+            print(r.text)
 
             session_id = r.json()['session.id']
             payload = {'session.id': session_id, 'ajax': 'reloadExecutors'}
 
             r = requests.post(url + '/executor', data=payload, timeout=5)
-            print r.status_code
-            print r.text
+            print(r.status_code)
+            print(r.text)
 
             if r.json()['status'] == 'success':
                 success = True
@@ -44,7 +44,7 @@ def reload_exec(local=False):
             retries += 1
             if retries > retry_count:
                 return success
-            print 'waiting for 1 seconds...'
+            print('waiting for 1 seconds...')
             time.sleep(1)
 
     return success

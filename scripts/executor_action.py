@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import requests
 import sys
@@ -28,8 +28,8 @@ else:
     while not success:
         try:
             r = requests.post(url, timeout=5)
-            print r.status_code
-            print r.text
+            print(r.status_code)
+            print(r.text)
 
             if r.json()['status'] == 'success':
                 success = True
@@ -44,5 +44,5 @@ else:
             retries += 1
             if retries > retry_count:
                 raise Exception('Attempt to ' + action + ' executor failed')
-            print 'waiting for 1 seconds...'
+            print('waiting for 1 seconds...')
             time.sleep(1)

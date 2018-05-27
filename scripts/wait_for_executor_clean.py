@@ -1,10 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import socket
 import requests
 import time
-import urllib
-from subprocess import check_output
+import urllib.parse
+from subprocess import getoutput
 from get_azk_creds import get_password
 
 URL = 'http://localhost:12321/serverStatistics'
@@ -41,29 +41,25 @@ def get_running_flows_from_web(this_executor_id, cookies):
 start = time.time()
 
 cmd = 'cat /yaml/exec.yaml|grep terminationGracePeriodSeconds'
-grace_period = int(check_output(cmd, shell=True).replace('terminationGracePeriodSeconds:','').rstrip().lstrip())
+grace_period = int(getoutput(cmd).replace('terminationGracePeriodSeconds:','').rstrip().lstrip())
 
 result = get_num_assigned_flow()
 clean = False
-retries = 0
 
 while not clean:
     if result == 0:
-        print 'numberOfAssignedFlows: ' + str(result)
-        print 'Executor ' + socket.gethostbyname(socket.gethostname()) + ' clean'
+        print('numberOfAssignedFlows:', result)
+        print('Executor ' + socket.gethostbyname(socket.gethostname()) + ' clean')
         clean = True
     else:
-        print 'numberOfAssignedFlows: ' + str(result)
-        retries += 1
-        if retries > grace_period - 600:
-            break
-        print 'waiting for 1 seconds...'
+        print('numberOfAssignedFlows:', result)
+        print('waiting for 1 seconds...')
         time.sleep(1)
         result = get_num_assigned_flow()
         now = time.time()
         elapsed = now - start
         remaining_time = grace_period - 600 - elapsed
-        if remaining_time <= result * 2:
+        if remaining_time <= result * 5:
             break
 
 if not clean:
@@ -74,8 +70,8 @@ if not clean:
 
     payload = {'action': 'login', 'username': 'admin', 'password': get_password('admin')}
     r = requests.post(web_url, data=payload, timeout=5)
-    print r.status_code
-    print r.text
+    print(r.status_code)
+    print(r.text)
     session_id = r.json()['session.id']
     cookies = r.cookies
 
@@ -84,8 +80,8 @@ if not clean:
     # kill the flows
     for id in flows.keys():
         url = web_url + '/executor?ajax=cancelFlow&execid=' + str(id)
-        print 'killing execution id ' + str(id) + \
-                requests.get(url, cookies=cookies, timeout=5).text
+        print('killing execution id ' + str(id) + \
+                requests.get(url, cookies=cookies, timeout=5).text)
 
     # wait for executor clean
     result = len(get_running_flows_from_web(this_executor_id, cookies))
@@ -94,15 +90,15 @@ if not clean:
 
     while not clean:
         if result == 0:
-            print 'running flows: ' + str(result)
-            print 'Executor ' + socket.gethostbyname(socket.gethostname()) + ' clean'
+            print('running flows: ' + str(result))
+            print('Executor ' + socket.gethostbyname(socket.gethostname()) + ' clean')
             clean = True
         else:
-            print 'running flows: ' + str(result)
+            print('running flows: ' + str(result))
             retries += 1
             if retries > 10:
                 break
-            print 'waiting for 1 seconds...'
+            print('waiting for 1 seconds...')
             time.sleep(1)
             result = len(get_running_flows_from_web(this_executor_id, cookies))
 
@@ -111,7 +107,7 @@ if not clean:
     submit_second = []
     for id in flows.keys():
         url = web_url + '/executor?ajax=flowInfo&execid=' + str(id)
-        print 'getting flow info for execution id ' + str(id)
+        print('getting flow info for execution id ' + str(id))
         result = requests.get(url, cookies=cookies, timeout=5)
         flows[id]['info'] = result.json()
         if flows[id]['info']['concurrentOptions'] == 'skip':
@@ -123,12 +119,12 @@ if not clean:
     for execution_id in submit_first + submit_second:
         execution_info = flows[execution_id]
         flow_override = []
-        for k,v in execution_info['info']['flowParam'].iteritems():
-            flow_override.append(urllib.quote('flowOverride[{k}]'.format(k=k)) + \
+        for k,v in execution_info['info']['flowParam'].items():
+            flow_override.append(urllib.parse.quote('flowOverride[{k}]'.format(k=k)) + \
                 '={v}'.format(v=v))
         flow_override = '&' + '&'.join(flow_override) if len(flow_override) > 0 else ''
         disabled = []
-        for k,v in execution_info['info']['nodeStatus'].iteritems():
+        for k,v in execution_info['info']['nodeStatus'].items():
             if v not in ('KILLED', 'CANCELLED'):
                 disabled.append(str(k))
         url = '''
@@ -141,20 +137,20 @@ if not clean:
             web_url=web_url,
             project = execution_info['project'],
             flow=execution_info['flow'],
-            disabled=urllib.quote(str(disabled).replace("'",'"')),
+            disabled=urllib.parse.quote(str(disabled).replace("'",'"')),
             failureEmailsOverride=execution_info['info']['failureEmailsOverride'],
             successEmailsOverride=execution_info['info']['successEmailsOverride'],
             failureAction=execution_info['info']['failureAction'],
-            failureEmails=urllib.quote_plus(','.join(execution_info['info']['failureEmails'])),
-            successEmails=urllib.quote_plus(','.join(execution_info['info']['successEmails'])),
+            failureEmails=urllib.parse.quote_plus(','.join(execution_info['info']['failureEmails'])),
+            successEmails=urllib.parse.quote_plus(','.join(execution_info['info']['successEmails'])),
             notifyFailureFirst=execution_info['info']['notifyFailureFirst'],
             notifyFailureLast=execution_info['info']['notifyFailureLast'],
             concurrentOption=execution_info['info']['concurrentOptions']
         )
         url = url.replace('\n','').replace(' ','') + flow_override
-        print url
+        print(url)
         result = requests.get(url, cookies=cookies, timeout=5)
-        print result.text
+        print(result.text)
     
 ## allow for notifications
 time.sleep(10)
