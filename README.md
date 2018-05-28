@@ -60,8 +60,10 @@ Kubernetes resource requests specified here requires minimum n1-standard-8 and k
   - `jobs.py`
 
 ## Deployments on GKE
-Configure your gcloud account and install docker first. Then use `gcloud auth configure-docker` to configure `docker` to use `gcloud` as a credential helper. 
-Also, follow the guide [here](https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine) on creating secrets on kubernetes.
+Configure your gcloud account and install docker first. Then use `gcloud auth configure-docker` to 
+configure `docker` to use `gcloud` as a credential helper. 
+Also, follow the guide [here](https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine) on creating secrets on kubernetes, 
+we only need the `cloudsql-instance-credentials`.
 The service account need to have these role:
 - `Cloud SQL Client`
 - `Kubernetes Engine Developer`
