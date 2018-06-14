@@ -13,7 +13,7 @@ def check_exec_pods_stability():
     cmd = 'kubectl get po -o wide|grep exec|grep 2/2|grep Running|wc -l'
     num_stable_pods = int(getoutput(cmd))
 
-    cmd = 'kubectl get po -o wide|grep exec|grep -v Evicted|wc -l'
+    cmd = "kubectl get po -o wide|grep exec|grep -v Evicted|grep -Ev '0/2.*Terminating'|wc -l"
     num_all_pods = int(getoutput(cmd))
 
     stable = num_stable_pods == num_all_pods
@@ -32,7 +32,7 @@ def clean_evicted_pods():
 # activate service account and kubectl
 cmd = 'gcloud auth activate-service-account --key-file=/secrets/cloudsql/credentials.json'
 print(getoutput(cmd))
-cmd = 'gcloud container clusters get-credentials azkaban-cluster --zone asia-southeast1-a --project [project-id]'
+cmd = 'gcloud container clusters get-credentials azkaban-cluster --zone asia-southeast1-a --project tvlk-realtime'
 print(getoutput(cmd))
 
 wait_for_port_ready(3306, 15)
