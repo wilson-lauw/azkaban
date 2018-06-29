@@ -21,7 +21,7 @@ spec:
         resources:
           requests:
             memory: "20G"
-            cpu: "6000m"
+            cpu: "4000m"
         livenessProbe:
           failureThreshold: 5
           httpGet:
