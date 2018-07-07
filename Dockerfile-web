@@ -11,9 +11,7 @@ ADD common /common
 ADD scripts /scripts
 RUN chmod +x /scripts/*
 
-ENV AZKABAN_OPTS -Xmx16G -Xms16G -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+ParallelRefProcEnabled \
-                 -XX:-ResizePLAB -XX:ParallelGCThreads=6 -XX:ConcGCThreads=6 -XX:G1HeapWastePercent=20 \
-                 -XX:InitiatingHeapOccupancyPercent=75
+ENV AZKABAN_OPTS -Xmx16G -Xms16G -XX:+UseG1GC -XX:+ParallelRefProcEnabled 
 EXPOSE 8081
 
 CMD /scripts/start-web.sh
