@@ -26,7 +26,10 @@ def get_running_flows_from_web(this_executor_id, cookies):
         execution_id = int(r[start:end])
         start = r.index('<td>', end) + len('<td>')
         end = r.index('</td>', start)
-        executor_id = int(r[start:end].replace(' ','').replace('\n',''))
+        executor_id = r[start:end].replace(' ','').replace('\n','')
+        if executor_id == '-':
+            continue
+        executor_id = int(executor_id)
         if executor_id == this_executor_id:
             start = r.index('"/manager?') + len('"/manager?')
             end = r.index('">', start)
