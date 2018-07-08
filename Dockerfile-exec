@@ -1,4 +1,4 @@
-FROM openjdk:8-jre-stretch
+FROM openjdk:10-jre
 
 RUN apt-get update
 RUN apt-get install -y procps
@@ -12,9 +12,7 @@ ADD scripts /scripts
 RUN chmod +x /scripts/*
 ADD yaml /yaml
 
-ENV AZKABAN_OPTS -Xmx8G -Xms8G -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+ParallelRefProcEnabled \
-                 -XX:-ResizePLAB -XX:ParallelGCThreads=6 -XX:ConcGCThreads=6 -XX:G1HeapWastePercent=20 \
-                 -XX:InitiatingHeapOccupancyPercent=75
+ENV AZKABAN_OPTS -Xmx8G -Xms8G -XX:+ParallelRefProcEnabled 
 EXPOSE 12321
 
 CMD /scripts/start-exec.sh
