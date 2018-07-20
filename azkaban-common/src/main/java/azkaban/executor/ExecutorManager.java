@@ -1949,6 +1949,10 @@ public class ExecutorManager extends EventHandler implements
                   "Reached handleDispatchExceptionCase stage for exec %d with error count %d",
                   exflow.getExecutionId(), reference.getNumErrors()));
       reference.setNumErrors(reference.getNumErrors() + 1);
+
+      remainingExecutors.remove(lastSelectedExecutor);
+      selectExecutorAndDispatchFlow(reference, exflow, remainingExecutors);
+      /*
       if (reference.getNumErrors() > this.maxDispatchingErrors
           || remainingExecutors.size() <= 1) {
         logger.error("Failed to process queued flow");
@@ -1958,6 +1962,7 @@ public class ExecutorManager extends EventHandler implements
         // try other executors except chosenExecutor
         selectExecutorAndDispatchFlow(reference, exflow, remainingExecutors);
       }
+      */
     }
 
     private void handleNoExecutorSelectedCase(final ExecutionReference reference,
