@@ -1260,6 +1260,10 @@ public class ExecutorManager extends EventHandler implements
     } catch (final ExecutorManagerException e) {
       alertUser = false; // failed due to azkaban internal error, not to alert user
       logger.error(e);
+    } catch (Exception e) {
+      this.updaterStage = "finalizing flow " + execId + " error, cleaning from memory";
+      this.runningFlows.remove(execId);
+      throw e;
     }
 
     // TODO append to the flow log that we forced killed this flow because the
