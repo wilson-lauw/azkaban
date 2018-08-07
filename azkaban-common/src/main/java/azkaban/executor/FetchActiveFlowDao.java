@@ -64,6 +64,7 @@ public class FetchActiveFlowDao {
             + " LEFT JOIN "
             + " executors et ON ex.executor_id = et.id"
             + " Where ex.status NOT IN ("
+            + Status.PREPARING.getNumVal() + ", "
             + Status.SUCCEEDED.getNumVal() + ", "
             + Status.KILLED.getNumVal() + ", "
             + Status.FAILED.getNumVal() + ")";
