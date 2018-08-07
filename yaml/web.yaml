@@ -24,20 +24,16 @@ spec:
             cpu: "4000m"
         livenessProbe:
           failureThreshold: 5
-          httpGet:
-            path: /
-            port: 8081
-            scheme: HTTP
+          exec:
+            command: ["/scripts/web_jmx_check.py"]
           initialDelaySeconds: 30
           periodSeconds: 5
           successThreshold: 1
           timeoutSeconds: 10
         readinessProbe:
           failureThreshold: 5
-          httpGet:
-            path: /
-            port: 8081
-            scheme: HTTP
+          exec:
+            command: ["/scripts/web_jmx_check.py"]
           initialDelaySeconds: 30
           periodSeconds: 5
           successThreshold: 1
