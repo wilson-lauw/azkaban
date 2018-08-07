@@ -1574,7 +1574,7 @@ public class ExecutorManager extends EventHandler implements
                 for (final ExecutableFlow flow : entry.getValue()) {
                   logger.warn("Finalizing execution " + flow.getExecutionId()
                       + ". Executor id of this execution doesn't exist");
-                  finalizeFlows.add(flow);
+                  //finalizeFlows.add(flow);
                 }
                 continue;
               }

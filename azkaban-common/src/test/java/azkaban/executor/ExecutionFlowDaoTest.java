@@ -264,7 +264,7 @@ public class ExecutionFlowDaoTest {
   }
 
 
-  @Test @Ignore
+  @Test
   public void testFetchActiveFlowsExecutorAssigned() throws Exception {
 
     // Upload flow1, executor assigned
@@ -301,7 +301,7 @@ public class ExecutionFlowDaoTest {
     Map<Integer, Pair<ExecutionReference, ExecutableFlow>> activeFlows1 =
         this.fetchActiveFlowDao.fetchActiveFlows();
 
-    assertThat(activeFlows1.containsKey(flow1.getExecutionId())).isFalse();
+    assertThat(activeFlows1.containsKey(flow1.getExecutionId())).isTrue();
 
     // When flow status becomes SUCCEEDED/KILLED/FAILED, it should not be in active state
     flow1.setStatus(Status.SUCCEEDED);
