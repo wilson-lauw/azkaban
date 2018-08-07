@@ -20,7 +20,7 @@ r = r.json()['attributes']
 
 timestamp_to_be_checked = [r['LastSuccessfulExecutorInfoRefresh'], r['LastThreadCheckTime']]
 time_now = time.time()*1000
-threshold = 20 * 60000 #20 minutes
+threshold = 10 * 60000 #10 minutes
 
 for ts in timestamp_to_be_checked:
     lag = time_now - ts

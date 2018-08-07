@@ -1554,6 +1554,7 @@ public class ExecutorManager extends EventHandler implements
     public void run() {
       while (!this.shutdown) {
         try {
+          refreshExecutors();
           ExecutorManager.this.lastThreadCheckTime = System.currentTimeMillis();
           ExecutorManager.this.updaterStage = "Starting update all flows.";
 
