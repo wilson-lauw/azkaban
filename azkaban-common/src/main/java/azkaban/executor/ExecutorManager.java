@@ -1679,7 +1679,7 @@ public class ExecutorManager extends EventHandler implements
             }
           }
         } catch (final Exception e) {
-          logger.error(e);
+          logger.error("Unexpected exception in updating executions", e);
         }
       }
     }

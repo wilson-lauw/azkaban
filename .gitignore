@@ -30,5 +30,16 @@ out/
 
 currentpid
 
+# direnv files see https://github.com/direnv/direnv
+.envrc
+.direnv/
+
+# pytest
+.pytest_cache/
+
+#python
+__pycache__/
+
+#extra
 result.zip
 *.pyc
