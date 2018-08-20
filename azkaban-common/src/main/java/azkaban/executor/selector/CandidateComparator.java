@@ -58,7 +58,8 @@ public abstract class CandidateComparator<T> implements Comparator<T> {
     if (null == object1) {
       return false;
     }
-    return object1.hashCode() >= object2.hashCode();
+    //return object1.hashCode() >= object2.hashCode();
+    return Math.random() < 0.5;
   }
 
   /**
