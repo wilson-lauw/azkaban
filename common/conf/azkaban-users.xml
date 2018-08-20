@@ -10,7 +10,7 @@
 
   <group name="admin" roles="admin"/>
 
-  <role name="admin" permissions="ADMIN,"/>
+  <role name="admin" permissions="ADMIN"/>
   <role name="read" permissions="READ"/>
   <role name="write" permissions="WRITE"/>
   <role name="execute" permissions="EXECUTE"/>
