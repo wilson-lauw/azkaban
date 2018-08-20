@@ -16,6 +16,7 @@
   <role name="execute" permissions="EXECUTE"/>
   <role name="schedule" permissions="SCHEDULE"/>
   <role name="create" permissions="CREATEPROJECTS"/>
+  <role name="upload" permissions="UPLOADPROJECTS"/>
   <role name="metrics" permissions="METRICS"/>
 
 </azkaban-users>
