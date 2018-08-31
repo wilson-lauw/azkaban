@@ -447,7 +447,11 @@ public class ExecutorManager extends EventHandler implements
   }
 
   private void loadRunningFlows() throws ExecutorManagerException {
-    this.runningFlows.putAll(this.executorLoader.fetchActiveFlows());
+    logger.info("Loading running flows from database..");
+    final Map<Integer, Pair<ExecutionReference, ExecutableFlow>> activeFlows = this.executorLoader
+        .fetchActiveFlows();
+    logger.info("Loaded " + activeFlows.size() + " running flows");
+    this.runningFlows.putAll(activeFlows);
   }
 
   /*
@@ -1956,13 +1960,22 @@ public class ExecutorManager extends EventHandler implements
                   "Reached handleDispatchExceptionCase stage for exec %d with error count %d",
                   exflow.getExecutionId(), reference.getNumErrors()));
       reference.setNumErrors(reference.getNumErrors() + 1);
-
+      
       remainingExecutors.remove(lastSelectedExecutor);
       selectExecutorAndDispatchFlow(reference, exflow, remainingExecutors);
+      
       /*
-      if (reference.getNumErrors() > this.maxDispatchingErrors
-          || remainingExecutors.size() <= 1) {
-        logger.error("Failed to process queued flow");
+      String giveUpReason = null;
+      if (reference.getNumErrors() >= this.maxDispatchingErrors) {
+        giveUpReason = "reached " + Constants.ConfigurationKeys.MAX_DISPATCHING_ERRORS_PERMITTED
+            + " (tried " + reference.getNumErrors() + " executors)";
+      } else if (remainingExecutors.size() <= 1) {
+        giveUpReason = "tried calling all executors (total: "
+            + ExecutorManager.this.activeExecutors.size() + ") but all failed";
+      }
+      if (giveUpReason != null) {
+        logger.error("Failed to dispatch queued execution " + exflow.getId() + " because "
+            + giveUpReason);
         finalizeFlows(exflow);
       } else {
         remainingExecutors.remove(lastSelectedExecutor);
