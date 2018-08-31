@@ -42,6 +42,65 @@ Build
 ./gradlew clean build
 ```
 
+## Additional Changes
+Kubernetes resource requests specified here requires minimum n1-standard-8 and kubernetes version of 1.9.3-gke.0.
+
+- add required config files:
+  - `common/`
+- add stuffs to enable running on kubernetes to allow scalable workers.
+  - added kubernestes yaml files
+    - `yaml/`
+  - added scripts to gracefully add/shutdown executor
+    - `scripts/`
+  - added dockerfiles for the web server, executor server, and cron jobs for reloading executors list:
+    - `Dockerfile-sync`
+    - `Dockerfile-exec`
+    - `Dockerfile-web`
+  - we use cloudsql proxy to connect to cloudsql instance
+- added example job generation script using https://github.com/mtth/azkaban
+  - `jobs.py`
+
+## Deployments on GKE
+Configure your gcloud account and install docker first. Then use `gcloud auth configure-docker` to 
+configure `docker` to use `gcloud` as a credential helper. 
+Also, follow the guide [here](https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine) on creating secrets on kubernetes, 
+we only need the `cloudsql-instance-credentials`.
+The service account need to have these role:
+- `Cloud SQL Client`
+- `Kubernetes Engine Developer`
+
+Things that you need to change:
+- Project ID: `[project-id]` (you can find and replace all)
+- Image tag: `[image-tag]`
+- GKE cluster name: `azkaban-cluster`
+- CloudSQL instance: `azkaban-db`
+- Zone for GKE and CloudSQL: `asia-southeast1-a`
+- Azkaban config on `conf/`
+
+```
+./gradlew clean build installDist
+
+docker build -t gcr.io/[project-id]/azkaban-sync:[image-tag] -f Dockerfile-sync .
+docker build -t gcr.io/[project-id]/azkaban-exec:[image-tag] -f Dockerfile-exec .
+docker build -t gcr.io/[project-id]/azkaban-web:[image-tag] -f Dockerfile-web .
+
+docker push gcr.io/[project-id]/azkaban-sync:[image-tag]
+docker push gcr.io/[project-id]/azkaban-exec:[image-tag]
+docker push gcr.io/[project-id]/azkaban-web:[image-tag]
+
+kubectl apply -f yaml/
+```
+
+Experimental: set PDB for more efficient cluster scaling
+```
+kubectl apply -n kube-system -f yaml/kube-system/pdb.yaml
+```
+Connect to web UI via webproxy
+```
+./webproxy.sh
+```
+Then go to `localhost:8081`
+
 ## Documentation
 
 The current documentation will be deprecated soon at [azkaban.github.io](http://azkaban.github.io). 
@@ -73,3 +132,4 @@ make html
 
 **[July, 2018]** We are actively improving our documentation. Everyone in the AZ community is 
 welcome to submit a pull request to edit/fix the documentation.
+
