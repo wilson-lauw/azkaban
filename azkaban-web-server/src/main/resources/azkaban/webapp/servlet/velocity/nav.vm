@@ -103,7 +103,7 @@
       <div class="navbar-logo">
         <a href="${context}/">Azkaban</a>
         <div class="navbar-version">
-          ${version}
+        <!–– ${version} ––>  Kubernetes
         </div>
       </div>
 
