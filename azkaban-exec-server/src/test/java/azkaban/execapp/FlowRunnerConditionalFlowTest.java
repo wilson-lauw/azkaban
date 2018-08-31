@@ -27,8 +27,13 @@ import azkaban.project.Project;
 import azkaban.test.executions.ExecutionsTestUtil;
 import azkaban.utils.Props;
 import java.io.File;
+import java.security.Permission;
+import java.security.Policy;
+import java.security.ProtectionDomain;
 import java.util.HashMap;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class FlowRunnerConditionalFlowTest extends FlowRunnerTestBase {
@@ -40,6 +45,7 @@ public class FlowRunnerConditionalFlowTest extends FlowRunnerTestBase {
   private static final String CONDITIONAL_FLOW_4 = "conditional_flow4";
   private static final String CONDITIONAL_FLOW_5 = "conditional_flow5";
   private static final String CONDITIONAL_FLOW_6 = "conditional_flow6";
+  private static final String CONDITIONAL_FLOW_7 = "conditional_flow7";
   private FlowRunnerTestUtil testUtil;
   private Project project;
 
@@ -47,8 +53,19 @@ public class FlowRunnerConditionalFlowTest extends FlowRunnerTestBase {
   public void setUp() throws Exception {
     this.testUtil = new FlowRunnerTestUtil(FLOW_YAML_DIR, this.temporaryFolder);
     this.project = this.testUtil.getProject();
+
+    if (System.getSecurityManager() == null) {
+      Policy.setPolicy(new Policy() {
+        @Override
+        public boolean implies(final ProtectionDomain domain, final Permission permission) {
+          return true; // allow all
+        }
+      });
+      System.setSecurityManager(new SecurityManager());
+    }
   }
 
+  @Ignore
   @Test
   public void runFlowOnJobPropsCondition() throws Exception {
     final HashMap<String, String> flowProps = new HashMap<>();
@@ -80,18 +97,6 @@ public class FlowRunnerConditionalFlowTest extends FlowRunnerTestBase {
   }
 
   @Test
-  public void runFlowOnJobStatusOneFailed() throws Exception {
-    final HashMap<String, String> flowProps = new HashMap<>();
-    setUp(CONDITIONAL_FLOW_3, flowProps);
-    final ExecutableFlow flow = this.runner.getExecutableFlow();
-    InteractiveTestJob.getTestJob("jobA").failJob();
-    assertStatus(flow, "jobA", Status.FAILED);
-    assertStatus(flow, "jobB", Status.RUNNING);
-    assertStatus(flow, "jobC", Status.SUCCEEDED);
-    assertFlowStatus(flow, Status.SUCCEEDED);
-  }
-
-  @Test
   public void runFlowOnJobStatusAllFailed() throws Exception {
     final HashMap<String, String> flowProps = new HashMap<>();
     setUp(CONDITIONAL_FLOW_4, flowProps);
@@ -107,7 +112,7 @@ public class FlowRunnerConditionalFlowTest extends FlowRunnerTestBase {
   }
 
   @Test
-  public void runFlowOnJobStatusOneSuccessAllDone() throws Exception {
+  public void runFlowOnJobStatusOneSuccess() throws Exception {
     final HashMap<String, String> flowProps = new HashMap<>();
     setUp(CONDITIONAL_FLOW_5, flowProps);
     final ExecutableFlow flow = this.runner.getExecutableFlow();
@@ -124,9 +129,11 @@ public class FlowRunnerConditionalFlowTest extends FlowRunnerTestBase {
   @Test
   public void runFlowOnBothJobStatusAndPropsCondition() throws Exception {
     final HashMap<String, String> flowProps = new HashMap<>();
-    flowProps.put("azkaban.server.name", "foo");
     setUp(CONDITIONAL_FLOW_6, flowProps);
     final ExecutableFlow flow = this.runner.getExecutableFlow();
+    final Props generatedProperties = new Props();
+    generatedProperties.put("props", "foo");
+    InteractiveTestJob.getTestJob("jobA").succeedJob(generatedProperties);
     assertStatus(flow, "jobA", Status.SUCCEEDED);
     assertStatus(flow, "jobB", Status.SUCCEEDED);
     assertStatus(flow, "jobC", Status.CANCELLED);
@@ -145,6 +152,29 @@ public class FlowRunnerConditionalFlowTest extends FlowRunnerTestBase {
     assertStatus(flow, "jobB", Status.SUCCEEDED);
     assertStatus(flow, "jobC", Status.CANCELLED);
     assertFlowStatus(flow, Status.FAILED);
+  }
+
+  /**
+   * JobB has defined "condition: var fImport = new JavaImporter(java.io.File); with(fImport) { var
+   * f = new File('new'); f.createNewFile(); }"
+   * Null ProtectionDomain will restrict this arbitrary code from creating a new file.
+   * However it will not kick in when the change for condition whitelisting is implemented.
+   * As a result, this test case will be ignored.
+   *
+   * @throws Exception the exception
+   */
+  @Ignore
+  @Test
+  public void runFlowOnArbitraryCondition() throws Exception {
+    final HashMap<String, String> flowProps = new HashMap<>();
+    setUp(CONDITIONAL_FLOW_7, flowProps);
+    final ExecutableFlow flow = this.runner.getExecutableFlow();
+    assertStatus(flow, "jobA", Status.SUCCEEDED);
+    assertStatus(flow, "jobB", Status.CANCELLED);
+    assertFlowStatus(flow, Status.KILLED);
+    // The arbitrary code should be restricted from creating a new file.
+    final File file = new File("new.txt");
+    Assert.assertFalse(file.exists());
   }
 
   private void setUp(final String flowName, final HashMap<String, String> flowProps)

@@ -20,6 +20,7 @@ import static azkaban.Constants.ConfigurationKeys.AZKABAN_SERVER_HOST_NAME;
 import static azkaban.execapp.ConditionalWorkflowUtils.FAILED;
 import static azkaban.execapp.ConditionalWorkflowUtils.PENDING;
 import static azkaban.execapp.ConditionalWorkflowUtils.checkConditionOnJobStatus;
+import static azkaban.project.DirectoryYamlFlowLoader.CONDITION_VARIABLE_REPLACEMENT_PATTERN;
 
 import azkaban.Constants;
 import azkaban.Constants.JobProperties;
@@ -59,8 +60,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
+import java.security.AccessControlContext;
+import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -74,7 +78,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -93,9 +96,6 @@ public class FlowRunner extends EventHandler implements Runnable {
 
   private static final Layout DEFAULT_LAYOUT = new PatternLayout(
       "%d{dd-MM-yyyy HH:mm:ss z} %c{1} %p - %m\n");
-  // Pattern to match job variables in condition expressions: ${jobName:variable}
-  private static final Pattern VARIABLE_REPLACEMENT_PATTERN = Pattern
-      .compile("\\$\\{([^:{}]+):([^:{}]+)\\}");
   // We check update every 5 minutes, just in case things get stuck. But for the
   // most part, we'll be idling.
   private static final long CHECK_WAIT_MS = 5 * 60 * 1000;
@@ -185,21 +185,6 @@ public class FlowRunner extends EventHandler implements Runnable {
     // where the uninitialized logger is used in flow preparing state
     createLogger(this.flow.getFlowId());
     this.azkabanEventReporter = azkabanEventReporter;
-  }
-
-  private File findPropsFileForJob(final String prefix) {
-    final File[] files = this.getExecutionDir().listFiles(new FilenameFilter() {
-      @Override
-      public boolean accept(final File dir, final String name) {
-        return name.startsWith(prefix) && name.endsWith("tmp");
-      }
-    });
-
-    if (files == null || files.length == 0) {
-      this.logger.info("Not able to find props file for job " + prefix);
-      return null;
-    }
-    return files[0];
   }
 
   public FlowRunner setFlowWatcher(final FlowWatcher watcher) {
@@ -932,7 +917,7 @@ public class FlowRunner extends EventHandler implements Runnable {
       return true;
     }
 
-    final Matcher matcher = VARIABLE_REPLACEMENT_PATTERN.matcher(condition);
+    final Matcher matcher = CONDITION_VARIABLE_REPLACEMENT_PATTERN.matcher(condition);
     String replaced = condition;
 
     while (matcher.find()) {
@@ -949,21 +934,6 @@ public class FlowRunner extends EventHandler implements Runnable {
 
   private String findValueForJobVariable(final ExecutableNode node, final String jobName, final
   String variable) {
-    // Get props from job props tmp file
-    final File jobPropsFile = findPropsFileForJob(jobName + "_props");
-    if (jobPropsFile != null) {
-      try {
-        final Props jobProps = new Props(null, jobPropsFile);
-        if (jobProps.containsKey(variable)) {
-          return jobProps.get(variable);
-        }
-      } catch (final IOException e) {
-        this.logger.error("Not able to load props from job props file " + jobPropsFile
-            .getAbsolutePath());
-      }
-    }
-
-    // Todo jamiesjc: need to handle condition for embedded flows
     // Get job output props
     final ExecutableNode target = node.getParentFlow().getExecutableNode(jobName);
     if (target == null) {
@@ -982,14 +952,29 @@ public class FlowRunner extends EventHandler implements Runnable {
 
   private boolean evaluateExpression(final String expression) {
     boolean result = false;
+    final ScriptEngineManager sem = new ScriptEngineManager();
+    final ScriptEngine se = sem.getEngineByName("JavaScript");
+
+    // Restrict permission using the two-argument form of doPrivileged()
     try {
-      final ScriptEngineManager sem = new ScriptEngineManager();
-      final ScriptEngine se = sem.getEngineByName("JavaScript");
-      result = (boolean) se.eval(expression);
-      this.logger.info("Evaluate expression result: " + result);
-    } catch (final ScriptException e) {
-      this.logger.error("Invalid expression.", e);
+      final Object object = AccessController.doPrivileged(
+          new PrivilegedExceptionAction<Object>() {
+            @Override
+            public Object run() throws ScriptException {
+              return se.eval(expression);
+            }
+          },
+          new AccessControlContext(
+              new ProtectionDomain[]{new ProtectionDomain(null, null)}) // no permissions
+      );
+      if (object != null) {
+        result = (boolean) object;
+      }
+    } catch (final Exception e) {
+      this.logger.error("Failed to evaluate the expression.", e);
     }
+
+    this.logger.info("Evaluate expression result: " + result);
     return result;
   }
 
