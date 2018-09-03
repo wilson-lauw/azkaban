@@ -19,6 +19,7 @@ package azkaban.executor.selector;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import org.apache.log4j.Logger;
 
 /**
@@ -84,8 +85,11 @@ public class CandidateSelector<K extends Comparable<K>, V> implements Selector<K
           "candidate comparator is not specified, default hash code comparator class will be used.");
     }
 
+    List<K> list = new ArrayList(filteredList);
+    Collections.shuffle(list);
+
     // final work - find the best candidate from the filtered list.
-    final K executor = Collections.max(filteredList, this.comparator);
+    final K executor = Collections.max(list, this.comparator);
     logger.debug(String.format("candidate selected %s",
         null == executor ? "(null)" : executor.toString()));
     return executor;
