@@ -1264,6 +1264,10 @@ public class ExecutorManager extends EventHandler implements
     } catch (final ExecutorManagerException e) {
       alertUser = false; // failed due to azkaban internal error, not to alert user
       logger.error(e);
+    } catch (Exception e) {
+      this.updaterStage = "finalizing flow " + execId + " error, cleaning from memory";
+      this.runningFlows.remove(execId);
+      throw e;
     }
 
     // TODO append to the flow log that we forced killed this flow because the
@@ -1554,6 +1558,7 @@ public class ExecutorManager extends EventHandler implements
     public void run() {
       while (!this.shutdown) {
         try {
+          refreshExecutors();
           ExecutorManager.this.lastThreadCheckTime = System.currentTimeMillis();
           ExecutorManager.this.updaterStage = "Starting update all flows.";
 
@@ -1573,7 +1578,9 @@ public class ExecutorManager extends EventHandler implements
                 for (final ExecutableFlow flow : entry.getValue()) {
                   logger.warn("Finalizing execution " + flow.getExecutionId()
                       + ". Executor id of this execution doesn't exist");
-                  finalizeFlows.add(flow);
+                  if (flow.getStatus() == Status.RUNNING){
+                    finalizeFlows.add(flow);
+                  }
                 }
                 continue;
               }
@@ -1953,6 +1960,11 @@ public class ExecutorManager extends EventHandler implements
                   "Reached handleDispatchExceptionCase stage for exec %d with error count %d",
                   exflow.getExecutionId(), reference.getNumErrors()));
       reference.setNumErrors(reference.getNumErrors() + 1);
+      
+      remainingExecutors.remove(lastSelectedExecutor);
+      selectExecutorAndDispatchFlow(reference, exflow, remainingExecutors);
+      
+      /*
       String giveUpReason = null;
       if (reference.getNumErrors() >= this.maxDispatchingErrors) {
         giveUpReason = "reached " + Constants.ConfigurationKeys.MAX_DISPATCHING_ERRORS_PERMITTED
@@ -1970,6 +1982,7 @@ public class ExecutorManager extends EventHandler implements
         // try other executors except chosenExecutor
         selectExecutorAndDispatchFlow(reference, exflow, remainingExecutors);
       }
+      */
     }
 
     private void handleNoExecutorSelectedCase(final ExecutionReference reference,
