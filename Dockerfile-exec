@@ -4,10 +4,9 @@ RUN apt-get update
 RUN apt-get install -y procps
 RUN apt-get install -y python3 python3-pip
 RUN pip3 install requests==2.18.4
-WORKDIR /azkaban-exec-server
-ADD azkaban-exec-server/build/install/azkaban-exec-server /azkaban-exec-server
-ADD common /azkaban-exec-server
-ADD common /common
+WORKDIR /azkaban
+ADD azkaban-exec-server/build/install/azkaban-exec-server /azkaban
+ADD common /azkaban
 ADD scripts /scripts
 RUN chmod +x /scripts/*
 ADD yaml /yaml
