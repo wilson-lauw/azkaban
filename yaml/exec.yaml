@@ -14,35 +14,7 @@ spec:
     spec:
       containers:
       - name: exec
-        image: gcr.io/[project-id]/azkaban-dq-exec:[image-tag]
-        env:
-        - name: DE_COMMON_KEY
-          valueFrom:
-            secretKeyRef:
-              name: de-secret
-              key: common
-        - name: DE_CONFIG_KEY
-          valueFrom:
-            secretKeyRef:
-              name: de-secret
-              key: config
-        - name: JENKINS_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: jenkins-token
-              key: user
-        - name: JENKINS_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: jenkins-token
-              key: token
-        - name: EMAIL_PASS
-          valueFrom:
-            secretKeyRef:
-              name: email-pass
-              key: pass
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /secrets/gcp/dq.json
+        image: gcr.io/[project-id]/azkaban-exec:[image-tag]
         ports:
         - containerPort: 12321
         resources:
@@ -66,39 +38,30 @@ spec:
           successThreshold: 1
           timeoutSeconds: 10
         lifecycle:
-          postStart:
-            exec:
-              command: ["/root/google-cloud-sdk/bin/gcloud", "auth", "activate-service-account", "--key-file=/secrets/gcp/dq.json"]
           preStop:
             exec:
               command: ["/scripts/shutdown-exec.sh"]
         volumeMounts:
-        - name: tmp-pod
-          mountPath: /tmp/pod
-        - name: azkaban-properties
-          mountPath: /secrets/azkaban-properties
-          readOnly: true
-        - name: azkaban-users-xml
-          mountPath: /secrets/azkaban-users-xml
-          readOnly: true
-        - name: dq-gcp-secret
-          readOnly: true
-          mountPath: /secrets/gcp
-        - name: data-jenkins-bot-credential
-          readOnly: true
-          mountPath: /secrets/data-jenkins-bot-credential
+          - name: tmp-pod
+            mountPath: /tmp/pod
+          - name: azkaban-properties
+            mountPath: /secrets/azkaban-properties
+            readOnly: true
+          - name: azkaban-users-xml
+            mountPath: /secrets/azkaban-users-xml
+            readOnly: true
       - name: cloudsql-proxy
         image: gcr.io/cloudsql-docker/gce-proxy:1.11
         command: ["/cloud_sql_proxy",
                   "-instances=[project-id]:asia-southeast1:azkaban-db=tcp:3306",
                   "-credential_file=/secrets/cloudsql/credentials.json"]
         volumeMounts:
-        - name: cloudsql-instance-credentials
-          mountPath: /secrets/cloudsql
-          readOnly: true
-        - name: tmp-pod
-          mountPath: /tmp/pod
-          readOnly: true
+          - name: cloudsql-instance-credentials
+            mountPath: /secrets/cloudsql
+            readOnly: true
+          - name: tmp-pod
+            mountPath: /tmp/pod
+            readOnly: true
         resources:
           requests:
             memory: "500M"
@@ -125,24 +88,16 @@ spec:
               command: ["/bin/sh", "-c", "while true; do if [ -f /tmp/pod/main-terminated ]; then exit 0; fi; sleep 1; done"]
       terminationGracePeriodSeconds: 10800
       volumes:
-      - name: cloudsql-instance-credentials
-        secret:
-          secretName: cloudsql-instance-credentials
-      - name: cloudsql
-        emptyDir:
-      - name: tmp-pod
-        emptyDir: {}
-      - name: azkaban-properties
-        secret:
-          secretName: azkaban-properties
-      - name: azkaban-users-xml
-        secret:
-          secretName: azkaban-users-xml
-      - name: dq-gcp-secret
-        secret:
-          secretName: dq-gcp-service-account
-      - name: data-jenkins-bot-credential
-        secret:
-          secretName: data-jenkins-bot-credential
-          defaultMode: 256
-
+        - name: cloudsql-instance-credentials
+          secret:
+            secretName: cloudsql-instance-credentials
+        - name: cloudsql
+          emptyDir:
+        - name: tmp-pod
+          emptyDir: {}
+        - name: azkaban-properties
+          secret:
+            secretName: azkaban-properties
+        - name: azkaban-users-xml
+          secret:
+            secretName: azkaban-users-xml
