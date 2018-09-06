@@ -31,7 +31,7 @@ def clean_evicted_pods():
 # copy config file
 cmd = 'cp /secrets/azkaban-properties/azkaban.properties /azkaban/conf'
 print(getoutput(cmd))
-cmd = 'cp /secrets/azkaban-properties/azkaban-users.xml /azkaban/conf'
+cmd = 'cp /secrets/azkaban-users-xml/azkaban-users.xml /azkaban/conf'
 print(getoutput(cmd))
 
 # activate service account and kubectl
