@@ -68,6 +68,11 @@ we only need the `cloudsql-instance-credentials`.
 The service account need to have these role:
 - `Cloud SQL Client`
 - `Kubernetes Engine Developer`
+Put the `azkaban.properties` and `azkaban-users.xml` to the kubernetes secrets:
+```
+kubectl create secret generic azkaban-properties --from-file=azkaban.properties=/path/to/azkaban.properties
+kubectl create secret generic azkaban-users-xml --from-file=azkaban-users.xml=/path/to/azkaban-users.xml
+``` 
 
 Things that you need to change:
 - Project ID: `[project-id]` (you can find and replace all)

@@ -4,10 +4,9 @@ RUN apt-get update
 RUN apt-get install -y procps
 RUN apt-get install -y python3 python3-pip
 RUN pip3 install requests==2.18.4
-WORKDIR /azkaban-web-server
-ADD azkaban-web-server/build/install/azkaban-web-server /azkaban-web-server
-ADD common /azkaban-web-server
-ADD common /common
+WORKDIR /azkaban
+ADD azkaban-web-server/build/install/azkaban-web-server /azkaban
+ADD common /azkaban
 ADD scripts /scripts
 RUN chmod +x /scripts/*
 

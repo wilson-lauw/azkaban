@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
+cp /secrets/azkaban-properties/azkaban.properties /azkaban/conf
+cp /secrets/azkaban-properties/azkaban-users.xml /azkaban/conf
 /scripts/wait_for_port_ready.py 3306 15
-/azkaban-exec-server/bin/start-exec.sh
+/azkaban/bin/start-exec.sh
 /scripts/wait_for_port_ready.py 12321 15
 /scripts/executor_action.py activate
 /scripts/reload_exec.py

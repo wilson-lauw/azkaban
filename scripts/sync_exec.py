@@ -28,7 +28,12 @@ def clean_evicted_pods():
         cmd = 'kubectl delete po ' + r
         print(getoutput(cmd))
     
-    
+# copy config file
+cmd = 'cp /secrets/azkaban-properties/azkaban.properties /azkaban/conf'
+print(getoutput(cmd))
+cmd = 'cp /secrets/azkaban-properties/azkaban-users.xml /azkaban/conf'
+print(getoutput(cmd))
+
 # activate service account and kubectl
 cmd = 'gcloud auth activate-service-account --key-file=/secrets/cloudsql/credentials.json'
 print(getoutput(cmd))
@@ -61,16 +66,16 @@ while True:
 
         start = time.time()
 
-        cmd = 'cat /common/conf/azkaban.properties|grep mysql.host'
+        cmd = 'cat /azkaban/conf/azkaban.properties|grep mysql.host'
         host = getoutput(cmd).replace('mysql.host=','').rstrip()
 
-        cmd = 'cat /common/conf/azkaban.properties|grep mysql.database'
+        cmd = 'cat /azkaban/conf/azkaban.properties|grep mysql.database'
         db = getoutput(cmd).replace('mysql.database=','').rstrip()
 
-        cmd = 'cat /common/conf/azkaban.properties|grep mysql.user'
+        cmd = 'cat /azkaban/conf/azkaban.properties|grep mysql.user'
         user = getoutput(cmd).replace('mysql.user=','').rstrip()
 
-        cmd = 'cat /common/conf/azkaban.properties|grep mysql.password'
+        cmd = 'cat /azkaban/conf/azkaban.properties|grep mysql.password'
         passwd = getoutput(cmd).replace('mysql.password=','').rstrip()
 
         # grab executors list from db
