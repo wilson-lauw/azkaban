@@ -1264,7 +1264,11 @@ public class ExecutorManager extends EventHandler implements
     } catch (final ExecutorManagerException e) {
       alertUser = false; // failed due to azkaban internal error, not to alert user
       logger.error(e);
-    }
+    } catch (Exception e) {
+      this.updaterStage = "finalizing flow " + execId + " error, cleaning from memory";
+      this.runningFlows.remove(execId);
+      throw e;
+    }	    
 
     // TODO append to the flow log that we forced killed this flow because the
     // target no longer had
@@ -1556,6 +1560,7 @@ public class ExecutorManager extends EventHandler implements
     public void run() {
       while (!this.shutdown) {
         try {
+          refreshExecutors();
           ExecutorManager.this.lastThreadCheckTime = System.currentTimeMillis();
           ExecutorManager.this.updaterStage = "Starting update all flows.";
 
@@ -1575,7 +1580,9 @@ public class ExecutorManager extends EventHandler implements
                 for (final ExecutableFlow flow : entry.getValue()) {
                   logger.warn("Finalizing execution " + flow.getExecutionId()
                       + ". Executor id of this execution doesn't exist");
-                  finalizeFlows.add(flow);
+                  if (flow.getStatus() == Status.RUNNING){
+                    finalizeFlows.add(flow);
+                  }
                 }
                 continue;
               }
@@ -1871,7 +1878,7 @@ public class ExecutorManager extends EventHandler implements
       final Set<Executor> remainingExecutors = new HashSet<>(ExecutorManager.this.activeExecutors);
       synchronized (exflow) {
         for (int i = 0; i <= this.maxDispatchingErrors; i++) {
-          final String giveUpReason = checkGiveUpDispatching(reference, remainingExecutors);
+          final String giveUpReason = null;//checkGiveUpDispatching(reference, remainingExecutors);
           if (giveUpReason != null) {
             logger.error("Failed to dispatch queued execution " + exflow.getId() + " because "
                 + giveUpReason);
