@@ -1,0 +1,22 @@
+<azkaban-users>
+  <user groups="admin" password="admin" roles="admin" username="admin"/>
+  <user groups="admin" password="admin2" username="admin2"/>
+  <user password="read" roles="read" username="read"/>
+  <user password="write" roles="write" username="write"/>
+  <user password="execute" roles="execute" username="execute"/>
+  <user password="schedule" roles="schedule" username="schedule"/>
+  <user password="create" roles="create" username="create"/>
+  <user password="metrics" roles="metrics" username="metrics"/>
+
+  <group name="admin" roles="admin"/>
+
+  <role name="admin" permissions="ADMIN"/>
+  <role name="read" permissions="READ"/>
+  <role name="write" permissions="WRITE"/>
+  <role name="execute" permissions="EXECUTE"/>
+  <role name="schedule" permissions="SCHEDULE"/>
+  <role name="create" permissions="CREATEPROJECTS"/>
+  <role name="upload" permissions="UPLOADPROJECTS"/>
+  <role name="metrics" permissions="METRICS"/>
+
+</azkaban-users>
