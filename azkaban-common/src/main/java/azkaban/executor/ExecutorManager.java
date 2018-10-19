@@ -469,7 +469,7 @@ public class ExecutorManager extends EventHandler implements
 
   /* Helper method for getRunningFlows */
   private List<Integer> getRunningFlowsHelper(final int projectId, final String flowId,
-                                              final Collection<Pair<ExecutionReference, ExecutableFlow>> collection) {
+      final Collection<Pair<ExecutionReference, ExecutableFlow>> collection) {
     final List<Integer> executionIds = new ArrayList<>();
     for (final Pair<ExecutionReference, ExecutableFlow> ref : collection) {
       if (ref.getSecond().getFlowId().equals(flowId)
@@ -524,7 +524,7 @@ public class ExecutorManager extends EventHandler implements
 
   /* Search a running flow in a collection */
   private boolean isFlowRunningHelper(final int projectId, final String flowId,
-                                      final Collection<Pair<ExecutionReference, ExecutableFlow>> collection) {
+      final Collection<Pair<ExecutionReference, ExecutableFlow>> collection) {
     for (final Pair<ExecutionReference, ExecutableFlow> ref : collection) {
       if (ref.getSecond().getProjectId() == projectId
           && ref.getSecond().getFlowId().equals(flowId)) {
@@ -565,7 +565,7 @@ public class ExecutorManager extends EventHandler implements
    * ExecutableFlow collection
    */
   private void getActiveFlowHelper(final ArrayList<ExecutableFlow> flows,
-                                   final Collection<Pair<ExecutionReference, ExecutableFlow>> collection) {
+      final Collection<Pair<ExecutionReference, ExecutableFlow>> collection) {
     for (final Pair<ExecutionReference, ExecutableFlow> ref : collection) {
       flows.add(ref.getSecond());
     }
@@ -606,7 +606,7 @@ public class ExecutorManager extends EventHandler implements
 
   /* Helper method to flow ids of all running flows */
   private void getRunningFlowsIdsHelper(final List<Integer> allIds,
-                                        final Collection<Pair<ExecutionReference, ExecutableFlow>> collection) {
+      final Collection<Pair<ExecutionReference, ExecutableFlow>> collection) {
     for (final Pair<ExecutionReference, ExecutableFlow> ref : collection) {
       allIds.add(ref.getSecond().getExecutionId());
     }
@@ -627,7 +627,7 @@ public class ExecutorManager extends EventHandler implements
 
   @Override
   public List<ExecutableFlow> getExecutableFlows(final Project project,
-                                                 final String flowId, final int skip, final int size) throws ExecutorManagerException {
+      final String flowId, final int skip, final int size) throws ExecutorManagerException {
     final List<ExecutableFlow> flows =
         this.executorLoader.fetchFlowHistory(project.getId(), flowId, skip, size);
     return flows;
@@ -642,7 +642,7 @@ public class ExecutorManager extends EventHandler implements
 
   @Override
   public List<ExecutableFlow> getExecutableFlows(final String flowIdContains,
-                                                 final int skip, final int size) throws ExecutorManagerException {
+      final int skip, final int size) throws ExecutorManagerException {
     final List<ExecutableFlow> flows =
         this.executorLoader.fetchFlowHistory(null, '%' + flowIdContains + '%', null,
             0, -1, -1, skip, size);
@@ -651,9 +651,9 @@ public class ExecutorManager extends EventHandler implements
 
   @Override
   public List<ExecutableFlow> getExecutableFlows(final String projContain,
-                                                 final String flowContain, final String userContain, final int status, final long begin,
-                                                 final long end,
-                                                 final int skip, final int size) throws ExecutorManagerException {
+      final String flowContain, final String userContain, final int status, final long begin,
+      final long end,
+      final int skip, final int size) throws ExecutorManagerException {
     final List<ExecutableFlow> flows =
         this.executorLoader.fetchFlowHistory(projContain, flowContain, userContain,
             status, begin, end, skip, size);
@@ -662,7 +662,7 @@ public class ExecutorManager extends EventHandler implements
 
   @Override
   public List<ExecutableJobInfo> getExecutableJobs(final Project project,
-                                                   final String jobId, final int skip, final int size) throws ExecutorManagerException {
+      final String jobId, final int skip, final int size) throws ExecutorManagerException {
     final List<ExecutableJobInfo> nodes =
         this.executorLoader.fetchJobHistory(project.getId(), jobId, skip, size);
     return nodes;
@@ -682,7 +682,7 @@ public class ExecutorManager extends EventHandler implements
 
   @Override
   public LogData getExecutableFlowLog(final ExecutableFlow exFlow, final int offset,
-                                      final int length) throws ExecutorManagerException {
+      final int length) throws ExecutorManagerException {
     final Pair<ExecutionReference, ExecutableFlow> pair =
         this.runningExecutions.get().get(exFlow.getExecutionId());
     if (pair != null) {
@@ -706,7 +706,7 @@ public class ExecutorManager extends EventHandler implements
 
   @Override
   public LogData getExecutionJobLog(final ExecutableFlow exFlow, final String jobId,
-                                    final int offset, final int length, final int attempt) throws ExecutorManagerException {
+      final int offset, final int length, final int attempt) throws ExecutorManagerException {
     final Pair<ExecutionReference, ExecutableFlow> pair =
         this.runningExecutions.get().get(exFlow.getExecutionId());
     if (pair != null) {
@@ -734,7 +734,7 @@ public class ExecutorManager extends EventHandler implements
 
   @Override
   public List<Object> getExecutionJobStats(final ExecutableFlow exFlow, final String jobId,
-                                           final int attempt) throws ExecutorManagerException {
+      final int attempt) throws ExecutorManagerException {
     final Pair<ExecutionReference, ExecutableFlow> pair =
         this.runningExecutions.get().get(exFlow.getExecutionId());
     if (pair == null) {
@@ -823,7 +823,7 @@ public class ExecutorManager extends EventHandler implements
   }
 
   private String getApplicationId(final ExecutableFlow exFlow, final String jobId,
-                                  final int attempt) {
+      final int attempt) {
     String applicationId;
     boolean finished = false;
     int offset = 0;
@@ -851,7 +851,7 @@ public class ExecutorManager extends EventHandler implements
 
   @Override
   public JobMetaData getExecutionJobMetaData(final ExecutableFlow exFlow,
-                                             final String jobId, final int offset, final int length, final int attempt)
+      final String jobId, final int offset, final int length, final int attempt)
       throws ExecutorManagerException {
     final Pair<ExecutionReference, ExecutableFlow> pair =
         this.runningExecutions.get().get(exFlow.getExecutionId());
@@ -938,14 +938,14 @@ public class ExecutorManager extends EventHandler implements
 
   @Override
   public void pauseExecutingJobs(final ExecutableFlow exFlow, final String userId,
-                                 final String... jobIds) throws ExecutorManagerException {
+      final String... jobIds) throws ExecutorManagerException {
     modifyExecutingJobs(exFlow, ConnectorParams.MODIFY_PAUSE_JOBS, userId,
         jobIds);
   }
 
   @Override
   public void resumeExecutingJobs(final ExecutableFlow exFlow, final String userId,
-                                  final String... jobIds) throws ExecutorManagerException {
+      final String... jobIds) throws ExecutorManagerException {
     modifyExecutingJobs(exFlow, ConnectorParams.MODIFY_RESUME_JOBS, userId,
         jobIds);
   }
@@ -958,35 +958,35 @@ public class ExecutorManager extends EventHandler implements
 
   @Override
   public void retryExecutingJobs(final ExecutableFlow exFlow, final String userId,
-                                 final String... jobIds) throws ExecutorManagerException {
+      final String... jobIds) throws ExecutorManagerException {
     modifyExecutingJobs(exFlow, ConnectorParams.MODIFY_RETRY_JOBS, userId,
         jobIds);
   }
 
   @Override
   public void disableExecutingJobs(final ExecutableFlow exFlow, final String userId,
-                                   final String... jobIds) throws ExecutorManagerException {
+      final String... jobIds) throws ExecutorManagerException {
     modifyExecutingJobs(exFlow, ConnectorParams.MODIFY_DISABLE_JOBS, userId,
         jobIds);
   }
 
   @Override
   public void enableExecutingJobs(final ExecutableFlow exFlow, final String userId,
-                                  final String... jobIds) throws ExecutorManagerException {
+      final String... jobIds) throws ExecutorManagerException {
     modifyExecutingJobs(exFlow, ConnectorParams.MODIFY_ENABLE_JOBS, userId,
         jobIds);
   }
 
   @Override
   public void cancelExecutingJobs(final ExecutableFlow exFlow, final String userId,
-                                  final String... jobIds) throws ExecutorManagerException {
+      final String... jobIds) throws ExecutorManagerException {
     modifyExecutingJobs(exFlow, ConnectorParams.MODIFY_CANCEL_JOBS, userId,
         jobIds);
   }
 
   @SuppressWarnings("unchecked")
   private Map<String, Object> modifyExecutingJobs(final ExecutableFlow exFlow,
-                                                  final String command, final String userId, final String... jobIds)
+      final String command, final String userId, final String... jobIds)
       throws ExecutorManagerException {
     synchronized (exFlow) {
       final Pair<ExecutionReference, ExecutableFlow> pair =
@@ -1137,7 +1137,7 @@ public class ExecutorManager extends EventHandler implements
    */
   @Override
   public Map<String, Object> callExecutorStats(final int executorId, final String action,
-                                               final Pair<String, String>... params) throws IOException, ExecutorManagerException {
+      final Pair<String, String>... params) throws IOException, ExecutorManagerException {
     final Executor executor = fetchExecutor(executorId);
 
     final List<Pair<String, String>> paramList =
@@ -1157,7 +1157,7 @@ public class ExecutorManager extends EventHandler implements
 
   @Override
   public Map<String, Object> callExecutorJMX(final String hostPort, final String action,
-                                             final String mBean) throws IOException {
+      final String mBean) throws IOException {
     final List<Pair<String, String>> paramList =
         new ArrayList<>();
 
@@ -1179,7 +1179,7 @@ public class ExecutorManager extends EventHandler implements
 
   @Override
   public int getExecutableFlows(final int projectId, final String flowId, final int from,
-                                final int length, final List<ExecutableFlow> outputList)
+      final int length, final List<ExecutableFlow> outputList)
       throws ExecutorManagerException {
     final List<ExecutableFlow> flows =
         this.executorLoader.fetchFlowHistory(projectId, flowId, from, length);
@@ -1189,7 +1189,7 @@ public class ExecutorManager extends EventHandler implements
 
   @Override
   public List<ExecutableFlow> getExecutableFlows(final int projectId, final String flowId,
-                                                 final int from, final int length, final Status status) throws ExecutorManagerException {
+      final int from, final int length, final Status status) throws ExecutorManagerException {
     return this.executorLoader.fetchFlowHistory(projectId, flowId, from, length,
         status);
   }
@@ -1199,7 +1199,7 @@ public class ExecutorManager extends EventHandler implements
    * executableFlow
    */
   private void dispatch(final ExecutionReference reference, final ExecutableFlow exflow,
-                        final Executor choosenExecutor) throws ExecutorManagerException {
+      final Executor choosenExecutor) throws ExecutorManagerException {
     exflow.setUpdateTime(System.currentTimeMillis());
 
     this.executorLoader.assignExecutor(choosenExecutor.getId(),
@@ -1355,7 +1355,7 @@ public class ExecutorManager extends EventHandler implements
 
     /* Method responsible for processing the non-dispatched flows */
     private void processQueuedFlows(final long activeExecutorsRefreshWindow,
-                                    final int maxContinuousFlowProcessed) throws InterruptedException,
+        final int maxContinuousFlowProcessed) throws InterruptedException,
         ExecutorManagerException {
       long lastExecutorRefreshTime = 0;
       int currentContinuousFlowProcessed = 0;
@@ -1484,7 +1484,7 @@ public class ExecutorManager extends EventHandler implements
 
     /* Helper method to fetch  overriding Executor, if a valid user has specifed otherwise return null */
     private Executor getUserSpecifiedExecutor(final ExecutionOptions options,
-                                              final int executionId) {
+        final int executionId) {
       Executor executor = null;
       if (options != null
           && options.getFlowParameters() != null
@@ -1521,7 +1521,7 @@ public class ExecutorManager extends EventHandler implements
 
     /* Choose Executor for exflow among the available executors */
     private Executor selectExecutor(final ExecutableFlow exflow,
-                                    final Set<Executor> availableExecutors) {
+        final Set<Executor> availableExecutors) {
       Executor choosenExecutor =
           getUserSpecifiedExecutor(exflow.getExecutionOptions(),
               exflow.getExecutionId());
