@@ -114,13 +114,13 @@ public class ExecutorManager extends EventHandler implements
 
   @Inject
   public ExecutorManager(final Props azkProps, final ExecutorLoader executorLoader,
-                         final CommonMetrics commonMetrics,
-                         final ExecutorApiGateway apiGateway,
-                         final RunningExecutions runningExecutions,
-                         final ActiveExecutors activeExecutors,
-                         final ExecutorManagerUpdaterStage updaterStage,
-                         final ExecutionFinalizer executionFinalizer,
-                         final RunningExecutionsUpdaterThread updaterThread) throws ExecutorManagerException {
+      final CommonMetrics commonMetrics,
+      final ExecutorApiGateway apiGateway,
+      final RunningExecutions runningExecutions,
+      final ActiveExecutors activeExecutors,
+      final ExecutorManagerUpdaterStage updaterStage,
+      final ExecutionFinalizer executionFinalizer,
+      final RunningExecutionsUpdaterThread updaterThread) throws ExecutorManagerException {
     this.azkProps = azkProps;
     this.commonMetrics = commonMetrics;
     this.executorLoader = executorLoader;
@@ -1305,10 +1305,10 @@ public class ExecutorManager extends EventHandler implements
     private volatile boolean isActive = true;
 
     public QueueProcessorThread(final boolean isActive,
-                                final long activeExecutorRefreshWindowInTime,
-                                final int activeExecutorRefreshWindowInFlows,
-                                final int maxDispatchingErrors,
-                                final Duration sleepAfterDispatchFailure) {
+        final long activeExecutorRefreshWindowInTime,
+        final int activeExecutorRefreshWindowInFlows,
+        final int maxDispatchingErrors,
+        final Duration sleepAfterDispatchFailure) {
       setActive(isActive);
       this.maxDispatchingErrors = maxDispatchingErrors;
       this.activeExecutorRefreshWindowInFlows =
@@ -1416,7 +1416,7 @@ public class ExecutorManager extends EventHandler implements
 
     /* process flow with a snapshot of available Executors */
     private void selectExecutorAndDispatchFlow(final ExecutionReference reference,
-                                               final ExecutableFlow exflow)
+        final ExecutableFlow exflow)
         throws ExecutorManagerException {
       final Set<Executor> remainingExecutors = new HashSet<>(
           ExecutorManager.this.activeExecutors.getAll());
@@ -1455,7 +1455,7 @@ public class ExecutorManager extends EventHandler implements
     }
 
     private void updateRemainingExecutorsAndSleep(final Set<Executor> remainingExecutors,
-                                                  final Executor selectedExecutor) {
+        final Executor selectedExecutor) {
       remainingExecutors.remove(selectedExecutor);
       if (remainingExecutors.isEmpty()) {
         remainingExecutors.addAll(ExecutorManager.this.activeExecutors.getAll());
@@ -1472,8 +1472,8 @@ public class ExecutorManager extends EventHandler implements
     }
 
     private void logFailedDispatchAttempt(final ExecutionReference reference,
-                                          final ExecutableFlow exflow,
-                                          final Executor selectedExecutor, final ExecutorManagerException e) {
+        final ExecutableFlow exflow,
+        final Executor selectedExecutor, final ExecutorManagerException e) {
       ExecutorManager.logger.warn(String.format(
           "Executor %s responded with exception for exec: %d",
           selectedExecutor, exflow.getExecutionId()), e);
@@ -1538,7 +1538,7 @@ public class ExecutorManager extends EventHandler implements
     }
 
     private void handleNoExecutorSelectedCase(final ExecutionReference reference,
-                                              final ExecutableFlow exflow) throws ExecutorManagerException {
+        final ExecutableFlow exflow) throws ExecutorManagerException {
       ExecutorManager.logger
           .info(String
               .format(
