@@ -1877,9 +1877,8 @@ public class ExecutorManager extends EventHandler implements
         throws ExecutorManagerException {
       final Set<Executor> remainingExecutors = new HashSet<>(ExecutorManager.this.activeExecutors);
       synchronized (exflow) {
-        //for (int i = 0; i <= this.maxDispatchingErrors; i++) {
-        for (int i = 0; i <= Integer.MAX_VALUE; i++) {
-          final String giveUpReason = null;//checkGiveUpDispatching(reference, remainingExecutors);
+        for (int i = 0; i <= this.maxDispatchingErrors; i++) {
+          final String giveUpReason = checkGiveUpDispatching(reference, remainingExecutors);
           if (giveUpReason != null) {
             logger.error("Failed to dispatch queued execution " + exflow.getId() + " because "
                 + giveUpReason);
