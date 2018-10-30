@@ -9,7 +9,7 @@ import json
 
 action = sys.argv[1]
 
-assert action in ('activate', 'deactivate', 'getStatus')
+assert action in ('activate', 'deactivate', 'getStatus', 'shutdown')
 
 url = 'http://localhost:12321/executor?action={action}'.format(action=action)
 
