@@ -548,7 +548,7 @@ public class AzkabanExecutorServer {
     getFlowRunnerManager().shutdown();
     // Sleep for an hour to wait for web server updater thread
     // {@link azkaban.executor.RunningExecutionsUpdaterThread#updateExecutions} to finalize updating
-    sleep(Duration.ofHours(1));
+    sleep(Duration.ofSeconds(5));
     // trigger shutdown hook
     System.exit(0);
   }

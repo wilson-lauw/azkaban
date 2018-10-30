@@ -9,6 +9,7 @@ from get_azk_creds import get_password
 
 URL = 'http://localhost:12321/serverStatistics'
 web_url = 'http://web.default.svc.cluster.local'
+sleep_secs = 5
 
 def get_num_assigned_flow():
     resp = requests.post(URL, timeout=5)
@@ -56,8 +57,8 @@ while not clean:
         clean = True
     else:
         print('numberOfAssignedFlows:', result)
-        print('waiting for 1 seconds...')
-        time.sleep(1)
+        print('waiting for {} seconds...'.format(sleep_secs))
+        time.sleep(sleep_secs)
         result = get_num_assigned_flow()
         now = time.time()
         elapsed = now - start
