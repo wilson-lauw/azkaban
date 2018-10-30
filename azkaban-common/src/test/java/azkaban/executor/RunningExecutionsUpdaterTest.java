@@ -18,6 +18,7 @@ import java.util.Map;
 import org.joda.time.DateTimeUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -82,6 +83,7 @@ public class RunningExecutionsUpdaterTest {
     verifyFinalizeFlow();
   }
 
+  @Ignore
   @Test
   public void updateExecutionsExecutorDoesNotExist() throws Exception {
     mockExecutorDoesNotExist();
