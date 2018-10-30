@@ -24,7 +24,7 @@ def clean_evicted_pods():
     result = getoutput(cmd).split('\n')
     result = filter(lambda l:len(l) > 0, result)
     for pod in result:
-        print('cleaning pod', r)
+        print('cleaning pod', pod)
         cmd = 'kubectl delete po {} --force --grace-period=0'.format(pod)
         print(getoutput(cmd))
 
@@ -33,7 +33,7 @@ def clean_terminating_pods():
     result = getoutput(cmd).split('\n')
     result = filter(lambda l:len(l) > 0, result)
     for pod in result:
-        print('cleaning pod', r)
+        print('cleaning pod', pod)
         cmd = 'kubectl delete po {} --force --grace-period=0'.format(pod)
         print(getoutput(cmd))
     
