@@ -23,9 +23,18 @@ def clean_evicted_pods():
     cmd = "kubectl get po|grep Evicted|awk '{print $1}'"
     result = getoutput(cmd).split('\n')
     result = filter(lambda l:len(l) > 0, result)
-    for r in result:
+    for pod in result:
         print('cleaning pod', r)
-        cmd = 'kubectl delete po ' + r
+        cmd = 'kubectl delete po {} --force --grace-period=0'.format(pod)
+        print(getoutput(cmd))
+
+def clean_terminating_pods():
+    cmd = "kubectl get po|grep Terminating|grep 0/2|awk '{print $1}'"
+    result = getoutput(cmd).split('\n')
+    result = filter(lambda l:len(l) > 0, result)
+    for pod in result:
+        print('cleaning pod', r)
+        cmd = 'kubectl delete po {} --force --grace-period=0'.format(pod)
         print(getoutput(cmd))
     
 # copy config file
@@ -54,6 +63,9 @@ while True:
         print('cleaning evicted pods..')
         clean_evicted_pods()
 
+        print('cleaning terminating pods..')
+        clean_terminating_pods()
+        
         # wait for pods are stable
         stable = check_exec_pods_stability()
         while not stable:
