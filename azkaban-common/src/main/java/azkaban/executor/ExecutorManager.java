@@ -179,7 +179,7 @@ public class ExecutorManager extends EventHandler implements
 
   public void start() throws ExecutorManagerException {
     initialize();
-    refreshExecutors();
+    initialize();
     this.updaterThread.start();
     this.cleanerThread.start();
     this.queueProcessor.start();
@@ -1340,6 +1340,7 @@ public class ExecutorManager extends EventHandler implements
       while (!this.shutdown) {
         synchronized (this) {
           try {
+            refreshExecutors();
             // start processing queue if active, other wait for sometime
             if (this.isActive) {
               processQueuedFlows(this.activeExecutorRefreshWindowInMillisec,
