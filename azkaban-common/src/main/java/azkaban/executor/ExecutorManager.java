@@ -179,7 +179,6 @@ public class ExecutorManager extends EventHandler implements
 
   public void start() throws ExecutorManagerException {
     initialize();
-    initialize();
     this.updaterThread.start();
     this.cleanerThread.start();
     this.queueProcessor.start();
