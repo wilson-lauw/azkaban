@@ -1270,8 +1270,8 @@ public class ExecutorManager extends EventHandler implements
               cleanExecutionLogs();
               this.lastLogCleanTime = currentTime;
             }
-
-            wait(CLEANER_THREAD_WAIT_INTERVAL_MS);
+            refreshExecutors();
+            wait(60 * 1000);
           } catch (final InterruptedException e) {
             ExecutorManager.logger.info("Interrupted. Probably to shut down.");
           }
@@ -1339,7 +1339,6 @@ public class ExecutorManager extends EventHandler implements
       while (!this.shutdown) {
         synchronized (this) {
           try {
-            refreshExecutors();
             // start processing queue if active, other wait for sometime
             if (this.isActive) {
               processQueuedFlows(this.activeExecutorRefreshWindowInMillisec,
