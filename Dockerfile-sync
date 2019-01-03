@@ -1,4 +1,4 @@
-FROM google/cloud-sdk:198.0.0-slim
+FROM google/cloud-sdk:228.0.0-slim
 
 WORKDIR /scripts
 ADD common /azkaban
