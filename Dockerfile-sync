@@ -1,0 +1,12 @@
+FROM google/cloud-sdk:228.0.0-slim
+
+WORKDIR /scripts
+ADD common /azkaban
+ADD scripts /scripts
+RUN chmod +x /scripts/*
+RUN apt-get update
+RUN apt-get install -y python3 python3-pip
+RUN apt-get install -y python-dev default-libmysqlclient-dev kubectl
+RUN pip3 install requests==2.18.4 mysqlclient
+
+CMD /scripts/sync_exec.py
