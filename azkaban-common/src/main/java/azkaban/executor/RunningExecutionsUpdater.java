@@ -80,9 +80,7 @@ public class RunningExecutionsUpdater {
         for (final ExecutableFlow flow : entry.getValue()) {
           logger.warn("Finalizing execution " + flow.getExecutionId()
               + ". Executor id of this execution doesn't exist");
-          if (flow.getStatus() == Status.RUNNING){
-            finalizeFlows.add(flow);
-          }
+          finalizeFlows.add(flow);
         }
         continue;
       }
