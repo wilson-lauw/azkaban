@@ -53,6 +53,7 @@ spec:
             readOnly: true
       - name: sync
         image: gcr.io/[project-id]/azkaban-sync:[image-tag]
+        command: ["/scripts/sync_exec.py", "[project-id]"]
         volumeMounts:
           - name: cloudsql-instance-credentials
             mountPath: /secrets/cloudsql
