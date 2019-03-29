@@ -36,21 +36,27 @@ def clean_terminating_pods():
         print('cleaning pod', pod)
         cmd = 'kubectl delete po {} --force --grace-period=0'.format(pod)
         print(getoutput(cmd))
-    
-# copy config file
-cmd = 'cp /secrets/azkaban-properties/azkaban.properties /azkaban/conf'
-print(getoutput(cmd))
-cmd = 'cp /secrets/azkaban-users-xml/azkaban-users.xml /azkaban/conf'
-print(getoutput(cmd))
 
 # activate service account and kubectl
 cmd = 'gcloud auth activate-service-account --key-file=/secrets/cloudsql/credentials.json'
 print(getoutput(cmd))
-cmd = 'gcloud container clusters get-credentials azkaban-cluster --zone asia-southeast1-a --project [project-id]'
+cmd = 'gcloud container clusters get-credentials azkaban-cluster --zone asia-southeast1-a --project {}'.format(sys.argv[1])
 print(getoutput(cmd))
 
 wait_for_port_ready(3306, 15)
 wait_for_port_ready(8081, 45)
+
+cmd = 'cat /azkaban/conf/azkaban.properties|grep mysql.host'
+host = getoutput(cmd).replace('mysql.host=','').rstrip()
+
+cmd = 'cat /azkaban/conf/azkaban.properties|grep mysql.database'
+db = getoutput(cmd).replace('mysql.database=','').rstrip()
+
+cmd = 'cat /azkaban/conf/azkaban.properties|grep mysql.user'
+user = getoutput(cmd).replace('mysql.user=','').rstrip()
+
+cmd = 'cat /azkaban/conf/azkaban.properties|grep mysql.password'
+passwd = getoutput(cmd).replace('mysql.password=','').rstrip()
 
 while True:
     time.sleep(60)
@@ -77,18 +83,6 @@ while True:
         print("Pods are stable")
 
         start = time.time()
-
-        cmd = 'cat /azkaban/conf/azkaban.properties|grep mysql.host'
-        host = getoutput(cmd).replace('mysql.host=','').rstrip()
-
-        cmd = 'cat /azkaban/conf/azkaban.properties|grep mysql.database'
-        db = getoutput(cmd).replace('mysql.database=','').rstrip()
-
-        cmd = 'cat /azkaban/conf/azkaban.properties|grep mysql.user'
-        user = getoutput(cmd).replace('mysql.user=','').rstrip()
-
-        cmd = 'cat /azkaban/conf/azkaban.properties|grep mysql.password'
-        passwd = getoutput(cmd).replace('mysql.password=','').rstrip()
 
         # grab executors list from db
         sql = 'select host from executors'
