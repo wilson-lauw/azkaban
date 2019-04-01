@@ -37,6 +37,11 @@ def clean_terminating_pods():
         cmd = 'kubectl delete po {} --force --grace-period=0'.format(pod)
         print(getoutput(cmd))
 
+cmd = 'cp /secrets/azkaban-properties/azkaban.properties /azkaban/conf'
+print(getoutput(cmd))
+cmd = 'cp /secrets/azkaban-users-xml/azkaban-users.xml /azkaban/conf'
+print(getoutput(cmd))
+
 # activate service account and kubectl
 cmd = 'gcloud auth activate-service-account --key-file=/secrets/cloudsql/credentials.json'
 print(getoutput(cmd))
