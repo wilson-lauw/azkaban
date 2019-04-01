@@ -130,8 +130,8 @@ while True:
         registered_executors = []
 
         for id, execInfo in executorStatusMap.items():
-            host = execInfo['host']
-            registered_executors.append(host)
+            registered_host = execInfo['host']
+            registered_executors.append(registered_host)
 
         registered_executors = set(registered_executors)
         print('registered_executors:', registered_executors)
