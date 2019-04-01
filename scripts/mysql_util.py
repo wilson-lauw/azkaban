@@ -38,7 +38,7 @@ def mysql_fetch(sql,host,user,passwd,db,dictCursor=True):
             return data
         except Exception as ex:
             retry_counter += 1
-            print('MySQL Fetch exception')
+            print('MySQL Fetch exception', ex)
             print('Try number ' + str(retry_counter))
             print(traceback.format_exc())
             time.sleep(retries_interval)
@@ -69,7 +69,7 @@ def mysql_execute(sql,host,user,passwd,db):
             db.close()
             success = True
         except Exception as ex:
-            print('MySQL Execute exception')
+            print('MySQL Execute exception', ex)
             print('Try number ' + str(retry_counter))
             print(traceback.format_exc())
             time.sleep(retries_interval)
