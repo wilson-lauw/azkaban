@@ -37,6 +37,11 @@ def clean_terminating_pods():
         cmd = 'kubectl delete po {} --force --grace-period=0'.format(pod)
         print(getoutput(cmd))
 
+cmd = 'cp /secrets/azkaban-properties/azkaban.properties /azkaban/conf'
+print(getoutput(cmd))
+cmd = 'cp /secrets/azkaban-users-xml/azkaban-users.xml /azkaban/conf'
+print(getoutput(cmd))
+
 # activate service account and kubectl
 cmd = 'gcloud auth activate-service-account --key-file=/secrets/cloudsql/credentials.json'
 print(getoutput(cmd))
@@ -130,8 +135,8 @@ while True:
         registered_executors = []
 
         for id, execInfo in executorStatusMap.items():
-            host = execInfo['host']
-            registered_executors.append(host)
+            registered_host = execInfo['host']
+            registered_executors.append(registered_host)
 
         registered_executors = set(registered_executors)
         print('registered_executors:', registered_executors)
