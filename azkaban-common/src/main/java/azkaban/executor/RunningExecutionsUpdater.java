@@ -67,7 +67,7 @@ public class RunningExecutionsUpdater {
    * Updates running executions.
    */
   @SuppressWarnings("unchecked")
-  public void updateExecutions() {
+  public void updateExecutions() throws InterruptedException{
     this.updaterStage.set("Starting update all flows.");
     final Map<Optional<Executor>, List<ExecutableFlow>> exFlowMap = getFlowToExecutorMap();
     final ArrayList<ExecutableFlow> finalizeFlows =
@@ -94,7 +94,13 @@ public class RunningExecutionsUpdater {
       try {
         results = this.apiGateway.updateExecutions(executor, entry.getValue());
       } catch (final ExecutorManagerException e) {
-        handleException(entry, executor, e, finalizeFlows);
+        //try twice to handle conflict with executor sync-er changing executor id
+        Thread.sleep(2000);
+        try {
+          results = this.apiGateway.updateExecutions(executor, entry.getValue());
+        } catch (final ExecutorManagerException e2) {
+          handleException(entry, executor, e2, finalizeFlows);
+        }
       }
 
       if (results != null) {
