@@ -67,7 +67,7 @@ public class RunningExecutionsUpdater {
    * Updates running executions.
    */
   @SuppressWarnings("unchecked")
-  public void updateExecutions() throws InterruptedException{
+  public void updateExecutions() {
     this.updaterStage.set("Starting update all flows.");
     final Map<Optional<Executor>, List<ExecutableFlow>> exFlowMap = getFlowToExecutorMap();
     final ArrayList<ExecutableFlow> finalizeFlows =
