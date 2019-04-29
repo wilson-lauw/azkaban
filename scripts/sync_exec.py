@@ -8,6 +8,7 @@ import time
 import requests
 import traceback
 import sys
+import datetime
 
 def check_exec_pods_stability():
     cmd = 'kubectl get po -o wide|grep exec|grep 2/2|grep Running|wc -l'
@@ -67,6 +68,7 @@ while True:
     time.sleep(60)
     
     try:
+        print('current datetime:', datetime.datetime.now())
         # reload executors
         print('reload executors..')
         reload_exec(True)

@@ -94,13 +94,7 @@ public class RunningExecutionsUpdater {
       try {
         results = this.apiGateway.updateExecutions(executor, entry.getValue());
       } catch (final ExecutorManagerException e) {
-        //try twice to handle conflict with executor sync-er changing executor id
-        Thread.sleep(2000);
-        try {
-          results = this.apiGateway.updateExecutions(executor, entry.getValue());
-        } catch (final ExecutorManagerException e2) {
-          handleException(entry, executor, e2, finalizeFlows);
-        }
+        handleException(entry, executor, e, finalizeFlows);
       }
 
       if (results != null) {
