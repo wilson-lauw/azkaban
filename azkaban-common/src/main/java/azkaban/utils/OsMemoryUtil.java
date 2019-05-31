@@ -23,8 +23,7 @@ class OsMemoryUtil {
   private static final String MEM_INFO_FILE = "/proc/meminfo";
 
   private static final ImmutableSet<String> MEM_KEYS = ImmutableSet
-      //.of("MemFree", "Buffers", "Cached", "SwapFree");
-      .of("MemAvailable");
+      .of("MemFree", "Buffers", "Cached", "SwapFree");
 
   /**
    * Includes OS cache and free swap.
