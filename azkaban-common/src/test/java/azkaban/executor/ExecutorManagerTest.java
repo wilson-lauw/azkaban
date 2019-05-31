@@ -482,6 +482,7 @@ public class ExecutorManagerTest {
   /**
    * ExecutorManager should try to dispatch to all executors until it succeeds.
    */
+  @Ignore
   @Test
   public void testDispatchMultipleRetries() throws Exception {
     this.props.put(Constants.ConfigurationKeys.MAX_DISPATCHING_ERRORS_PERMITTED, 4);
