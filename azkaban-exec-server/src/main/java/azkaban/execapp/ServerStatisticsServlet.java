@@ -82,7 +82,8 @@ public class ServerStatisticsServlet extends HttpServlet {
     if (exists_Bash && exists_Cat && exists_Grep && exists_Meminfo) {
       try {
         final ArrayList<String> output = Utils.runProcess("/bin/bash", "-c",
-            "/bin/cat /proc/meminfo | grep -E \"^MemTotal:|^MemFree:|^Buffers:|^Cached:|^SwapCached:\"");
+            "/bin/cat /proc/meminfo | grep -E \"^MemTotal:|^MemAvailable:\"");
+            //"/bin/cat /proc/meminfo | grep -E \"^MemTotal:|^MemFree:|^Buffers:|^Cached:|^SwapCached:\"");
 
         long totalMemory = 0;
         long totalFreeMemory = 0;
@@ -97,7 +98,7 @@ public class ServerStatisticsServlet extends HttpServlet {
         // SwapCached:            0 kB
         // Note : total free memory = freeMemory + cached + buffers + swapCached
         // TODO : think about merging the logic in systemMemoryInfo as the logic is similar
-        if (output.size() == 5) {
+        if (output.size() == 2) {
           for (final String result : output) {
             // find the total memory and value the variable.
             parsedResult = extractMemoryInfo("MemTotal", result);
@@ -106,6 +107,13 @@ public class ServerStatisticsServlet extends HttpServlet {
               continue;
             }
 
+            // find the available memory.
+            parsedResult = extractMemoryInfo("MemAvailable", result);
+            if (null != parsedResult) {
+              totalFreeMemory += parsedResult;
+              continue;
+            }
+            /*
             // find the free memory.
             parsedResult = extractMemoryInfo("MemFree", result);
             if (null != parsedResult) {
@@ -133,6 +141,7 @@ public class ServerStatisticsServlet extends HttpServlet {
               totalFreeMemory += parsedResult;
               continue;
             }
+            */
           }
         } else {
           logger.error(
