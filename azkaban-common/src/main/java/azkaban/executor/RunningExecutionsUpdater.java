@@ -72,7 +72,8 @@ public class RunningExecutionsUpdater {
     final Map<Optional<Executor>, List<ExecutableFlow>> exFlowMap = getFlowToExecutorMap();
     final ArrayList<ExecutableFlow> finalizeFlows =
         new ArrayList<>();
-
+    final ArrayList<ExecutableFlow> finalizeFlowsDoesNotExist =
+        new ArrayList<>();
     for (final Map.Entry<Optional<Executor>, List<ExecutableFlow>> entry : exFlowMap
         .entrySet()) {
 
@@ -116,7 +117,11 @@ public class RunningExecutionsUpdater {
 
             if (flow != null) {
               logger.warn("Finalizing execution " + flow.getExecutionId());
-              finalizeFlows.add(flow);
+              if (e.toString().contains("Flow does not exist")){
+                finalizeFlowsDoesNotExist.add(flow);
+              } else {
+                finalizeFlows.add(flow);
+              }
             }
           }
         }
@@ -128,6 +133,11 @@ public class RunningExecutionsUpdater {
     for (final ExecutableFlow flow : finalizeFlows) {
       this.executionFinalizer
           .finalizeFlow(flow, "Not running on the assigned executor (any more)", null);
+    }
+
+    for (final ExecutableFlow flow : finalizeFlowsDoesNotExist) {
+      this.executionFinalizer
+          .finalizeFlow(flow, "Not running on the assigned executor (any more) - Flow does not exist", null);
     }
 
     this.updaterStage.set("Updated all active flows. Waiting for next round.");

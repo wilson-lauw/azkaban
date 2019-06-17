@@ -89,10 +89,14 @@ public class ExecutionFinalizer {
       alertUser = false; // failed due to azkaban internal error, not to alert user
       logger.error(e);
     } catch (Exception e) {
-      this.updaterStage.set("finalizing flow " + execId + " error, cleaning from memory");
+      logger.error("finalizing flow " + execId + " error, cleaning from memory");
       this.runningExecutions.get().remove(execId);
       throw e;
-    }	    
+    }
+
+    if (reason.contains("Flow does not exist")){
+      alertUser = false;
+    }
 
     // TODO append to the flow log that we marked this flow as failed + the extraReasons
 
