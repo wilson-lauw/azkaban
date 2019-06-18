@@ -99,7 +99,7 @@ public class RunningExecutionsUpdaterTest {
     mockFlowDoesNotExist();
     this.updater.updateExecutions();
     verifyCallUpdateApi();
-    verifyFinalizeFlow();
+    verifyFinalizeFlowDoesNotExist();
   }
 
   @Test
@@ -190,6 +190,11 @@ public class RunningExecutionsUpdaterTest {
   private void verifyFinalizeFlow() {
     verify(this.executionFinalizer).finalizeFlow(this.execution,
         "Not running on the assigned executor (any more)", null);
+  }
+
+  private void verifyFinalizeFlowDoesNotExist() {
+    verify(this.executionFinalizer).finalizeFlow(this.execution,
+        "Not running on the assigned executor (any more) - Flow does not exist", null);
   }
 
 }
