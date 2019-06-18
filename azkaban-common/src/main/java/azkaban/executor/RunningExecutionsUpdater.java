@@ -117,7 +117,7 @@ public class RunningExecutionsUpdater {
 
             if (flow != null) {
               logger.warn("Finalizing execution " + flow.getExecutionId());
-              if (e.toString().contains("Flow does not exist")){
+              if (e.getMessage().contains("Flow does not exist")){
                 finalizeFlowsDoesNotExist.add(flow);
               } else {
                 finalizeFlows.add(flow);
