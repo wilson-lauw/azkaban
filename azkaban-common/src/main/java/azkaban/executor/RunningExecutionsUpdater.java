@@ -114,6 +114,7 @@ public class RunningExecutionsUpdater {
           } catch (final ExecutorManagerException e) {
             final ExecutableFlow flow = e.getExecutableFlow();
             logger.error(e);
+            logger.warn(e.getMessage());
 
             if (flow != null) {
               logger.warn("Finalizing execution " + flow.getExecutionId());
