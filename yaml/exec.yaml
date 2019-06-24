@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: exec
+spec:
+  selector:
+    matchLabels:
+      app: exec
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: exec
+    spec:
+      containers:
+      - name: exec
+        image: gcr.io/[project-id]/azkaban-exec:[image-tag]
+        ports:
+        - containerPort: 12321
+        resources:
+          requests:
+            memory: "25G"
+            cpu: "6000m"
+        livenessProbe:
+          failureThreshold: 5
+          exec:
+            command: ["/scripts/executor_action.py", "getStatus"]
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 10
+        readinessProbe:
+          failureThreshold: 5
+          exec:
+            command: ["/scripts/executor_action.py", "getStatus"]
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 10
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/scripts/shutdown-exec.sh"]
+        volumeMounts:
+          - name: tmp-pod
+            mountPath: /tmp/pod
+          - name: azkaban-properties
+            mountPath: /secrets/azkaban-properties
+            readOnly: true
+          - name: azkaban-users-xml
+            mountPath: /secrets/azkaban-users-xml
+            readOnly: true
+      - name: cloudsql-proxy
+        image: gcr.io/cloudsql-docker/gce-proxy:1.11
+        command: ["/cloud_sql_proxy",
+                  "-instances=[project-id]:asia-southeast1:azkaban-db=tcp:3306",
+                  "-credential_file=/secrets/cloudsql/credentials.json"]
+        volumeMounts:
+          - name: cloudsql-instance-credentials
+            mountPath: /secrets/cloudsql
+            readOnly: true
+          - name: tmp-pod
+            mountPath: /tmp/pod
+            readOnly: true
+        resources:
+          requests:
+            memory: "500M"
+            cpu: "200m"
+        livenessProbe:
+          failureThreshold: 5
+          exec:
+            command: ["nc", "-z", "127.0.0.1", "3306"]
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 10
+        readinessProbe:
+          failureThreshold: 5
+          exec:
+            command: ["nc", "-z", "127.0.0.1", "3306"]
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 10
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "while true; do if [ -f /tmp/pod/main-terminated ]; then exit 0; fi; sleep 1; done"]
+      terminationGracePeriodSeconds: 10800
+      volumes:
+        - name: cloudsql-instance-credentials
+          secret:
+            secretName: cloudsql-instance-credentials
+        - name: cloudsql
+          emptyDir:
+        - name: tmp-pod
+          emptyDir: {}
+        - name: azkaban-properties
+          secret:
+            secretName: azkaban-properties
+        - name: azkaban-users-xml
+          secret:
+            secretName: azkaban-users-xml

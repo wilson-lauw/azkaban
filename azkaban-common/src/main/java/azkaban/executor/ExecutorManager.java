@@ -1118,8 +1118,8 @@ public class ExecutorManager extends EventHandler implements
               cleanExecutionLogs();
               this.lastLogCleanTime = currentTime;
             }
-
-            wait(CLEANER_THREAD_WAIT_INTERVAL_MS);
+            refreshExecutors();
+            wait(60 * 1000);
           } catch (final InterruptedException e) {
             ExecutorManager.logger.info("Interrupted. Probably to shut down.");
           }
@@ -1292,7 +1292,7 @@ public class ExecutorManager extends EventHandler implements
               updateRemainingExecutorsAndSleep(remainingExecutors, selectedExecutor);
             }
           }
-        } while (reference.getNumErrors() < this.maxDispatchingErrors);
+        } while (reference.getNumErrors() < Integer.MAX_VALUE);//this.maxDispatchingErrors);
         // GAVE UP DISPATCHING
         final String message = "Failed to dispatch queued execution " + exflow.getId() + " because "
             + "reached " + ConfigurationKeys.MAX_DISPATCHING_ERRORS_PERMITTED
@@ -1306,7 +1306,7 @@ public class ExecutorManager extends EventHandler implements
         final Executor selectedExecutor) {
       remainingExecutors.remove(selectedExecutor);
       if (remainingExecutors.isEmpty()) {
-        remainingExecutors.addAll(ExecutorManager.this.activeExecutors.getAll());
+        //remainingExecutors.addAll(ExecutorManager.this.activeExecutors.getAll());
         sleepAfterDispatchFailure();
       }
     }
