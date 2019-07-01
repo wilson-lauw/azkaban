@@ -6,4 +6,4 @@ cp /secrets/azkaban-users-xml/azkaban-users.xml /azkaban/conf
 /azkaban/bin/start-web.sh
 /scripts/wait_for_port_ready.py 8081 45
 /scripts/reload_exec.py local
-tail -f /dev/null
+tail -f /azkaban/webServerLog_*
