@@ -21,24 +21,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.util.Pair;
+import java.util.AbstractMap.SimpleEntry;
 
 /**
  * Records the sequence of nodes and dag status change.
  */
 class StatusChangeRecorder {
 
-  private final List<Pair<String, Status>> sequence = new ArrayList<>();
+  private final List<SimpleEntry<String, Status>> sequence = new ArrayList<>();
 
   void recordNode(final Node node) {
-    this.sequence.add(new Pair<>(node.getName(), node.getStatus()));
+    this.sequence.add(new SimpleEntry<>(node.getName(), node.getStatus()));
   }
 
   void recordDag(final Dag dag) {
-    this.sequence.add(new Pair<>(dag.getName(), dag.getStatus()));
+    this.sequence.add(new SimpleEntry<>(dag.getName(), dag.getStatus()));
   }
 
-  void verifySequence(final List<Pair<String, Status>> expectedSequence) {
+  void verifySequence(final List<SimpleEntry<String, Status>> expectedSequence) {
     assertThat(this.sequence).isEqualTo(expectedSequence);
   }
 }
