@@ -396,6 +396,14 @@ public class AzkabanExecutorServer implements IMBeanRegistrable {
    * @return hostname
    */
   public String getHost() {
+    String podIP = "unkownHost";
+    try {
+      podIP = InetAddress.getLocalHost().getHostAddress();
+    } catch (Exception e) {
+      logger.error("Failed to fetch podIP");
+    }
+    return podIP;
+    /*
     if (this.props.containsKey(ConfigurationKeys.AZKABAN_SERVER_HOST_NAME)) {
       final String hostName = this.props
           .getString(Constants.ConfigurationKeys.AZKABAN_SERVER_HOST_NAME);
@@ -411,6 +419,7 @@ public class AzkabanExecutorServer implements IMBeanRegistrable {
       logger.error("Failed to fetch LocalHostName");
     }
     return host;
+    */
   }
 
   /**

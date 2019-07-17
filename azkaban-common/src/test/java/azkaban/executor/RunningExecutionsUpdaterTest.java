@@ -2,6 +2,7 @@ package azkaban.executor;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
@@ -104,7 +105,7 @@ public class RunningExecutionsUpdaterTest {
   @Test
   public void updateExecutionsUpdateCallFails() throws Exception {
     mockUpdateCallFails();
-    when(this.executorLoader.fetchExecutor(anyInt())).thenReturn(this.activeExecutor);
+    when(this.executorLoader.fetchExecutor(anyString(), anyInt())).thenReturn(this.activeExecutor);
     DateTimeUtils.setCurrentMillisFixed(System.currentTimeMillis());
     for (int i = 0; i < this.updater.numErrorsBeforeUnresponsiveEmail; i++) {
       this.updater.updateExecutions();
@@ -122,7 +123,7 @@ public class RunningExecutionsUpdaterTest {
   @Test
   public void updateExecutionsUpdateCallFailsExecutorDoesntExist() throws Exception {
     mockUpdateCallFails();
-    when(this.executorLoader.fetchExecutor(anyInt())).thenReturn(null);
+    when(this.executorLoader.fetchExecutor(anyString(), anyInt())).thenReturn(null);
     DateTimeUtils.setCurrentMillisFixed(System.currentTimeMillis());
     this.updater.updateExecutions();
     verify(this.executionFinalizer).finalizeFlow(
@@ -135,7 +136,7 @@ public class RunningExecutionsUpdaterTest {
   @Test
   public void updateExecutionsUpdateCallFailsExecutorCheckThrows() throws Exception {
     mockUpdateCallFails();
-    when(this.executorLoader.fetchExecutor(anyInt()))
+    when(this.executorLoader.fetchExecutor(anyString(), anyInt()))
         .thenThrow(new ExecutorManagerException("Mocked fetchExecutor failure"));
     DateTimeUtils.setCurrentMillisFixed(System.currentTimeMillis());
     this.updater.updateExecutions();
