@@ -43,7 +43,7 @@ Build
 ```
 
 ## Additional Changes
-Kubernetes resource requests specified here requires minimum n1-standard-8 and kubernetes version of 1.9.3-gke.0.
+Kubernetes resource requests specified here requires minimum n1-standard-4 and kubernetes version of 1.9.3-gke.0.
 
 - add required config files:
   - `common/`
