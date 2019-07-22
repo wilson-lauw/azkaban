@@ -10,6 +10,7 @@ import traceback
 import sys
 import datetime
 
+
 def check_exec_pods_stability():
     cmd = 'kubectl get po -o wide|grep exec|grep 2/2|grep Running|wc -l'
     num_stable_pods = int(getoutput(cmd))
@@ -20,6 +21,7 @@ def check_exec_pods_stability():
     stable = num_stable_pods == num_all_pods
     return stable
 
+
 def clean_evicted_pods():
     cmd = "kubectl get po|grep Evicted|awk '{print $1}'"
     result = getoutput(cmd).split('\n')
@@ -28,6 +30,7 @@ def clean_evicted_pods():
         print('cleaning pod', pod)
         cmd = 'kubectl delete po {} --force --grace-period=0'.format(pod)
         print(getoutput(cmd))
+
 
 def clean_terminating_pods():
     cmd = "kubectl get po|grep Terminating|grep 0/2|awk '{print $1}'"
@@ -38,13 +41,14 @@ def clean_terminating_pods():
         cmd = 'kubectl delete po {} --force --grace-period=0'.format(pod)
         print(getoutput(cmd))
 
+
 cmd = 'cp /secrets/azkaban-properties/azkaban.properties /azkaban/conf'
 print(getoutput(cmd))
 cmd = 'cp /secrets/azkaban-users-xml/azkaban-users.xml /azkaban/conf'
 print(getoutput(cmd))
 
 # activate service account and kubectl
-cmd = 'gcloud auth activate-service-account --key-file=/secrets/cloudsql/credentials.json'
+cmd = 'gcloud auth activate-service-account --key-file=/secrets/credentials.json'
 print(getoutput(cmd))
 cmd = 'gcloud container clusters get-credentials azkaban-cluster --zone asia-southeast1-a --project {}'.format(sys.argv[1])
 print(getoutput(cmd))

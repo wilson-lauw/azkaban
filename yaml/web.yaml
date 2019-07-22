@@ -55,8 +55,8 @@ spec:
         image: gcr.io/[project-id]/azkaban-sync:[image-tag]
         command: ["/scripts/sync_exec.py", "[project-id]"]
         volumeMounts:
-          - name: cloudsql-instance-credentials
-            mountPath: /secrets/cloudsql
+          - name: service-account-credential
+            mountPath: /secrets
             readOnly: true
           - name: azkaban-properties
             mountPath: /secrets/azkaban-properties
@@ -72,10 +72,10 @@ spec:
         image: gcr.io/cloudsql-docker/gce-proxy:1.11
         command: ["/cloud_sql_proxy",
                   "-instances=[project-id]:asia-southeast1:azkaban-db=tcp:3306",
-                  "-credential_file=/secrets/cloudsql/credentials.json"]
+                  "-credential_file=/secrets/credentials.json"]
         volumeMounts:
-          - name: cloudsql-instance-credentials
-            mountPath: /secrets/cloudsql
+          - name: service-account-credential
+            mountPath: /secrets
             readOnly: true
           - name: tmp-pod
             mountPath: /tmp/pod
@@ -105,9 +105,9 @@ spec:
             exec:
               command: ["/bin/sh", "-c", "while true; do if [ -f /tmp/pod/main-terminated ]; then exit 0; fi; sleep 1; done"]
       volumes:
-        - name: cloudsql-instance-credentials
+        - name: service-account-credential
           secret:
-            secretName: cloudsql-instance-credentials
+            secretName: service-account-credential
         - name: tmp-pod
           emptyDir: {}
         - name: azkaban-properties
