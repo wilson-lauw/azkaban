@@ -65,6 +65,9 @@ Configure your gcloud account and install docker first. Then use `gcloud auth co
 configure `docker` to use `gcloud` as a credential helper. 
 Also, follow the guide [here](https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine) on creating secrets on kubernetes, 
 we only need the `cloudsql-instance-credentials`, but we name it `service-account-credential`.
+```
+kubectl create secret generic service-account-credential --from-file=credential.json=/path/to/credential.json
+```
 The service account need to have these role:
 - `Cloud SQL Client`
 - `Kubernetes Engine Developer`
