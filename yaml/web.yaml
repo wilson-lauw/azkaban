@@ -21,7 +21,7 @@ spec:
         resources:
           requests:
             memory: "10G"
-            cpu: "3000m"
+            cpu: "2500m"
         livenessProbe:
           failureThreshold: 5
           exec:
