@@ -43,7 +43,7 @@ Build
 ```
 
 ## Additional Changes
-Kubernetes resource requests specified here requires minimum n1-standard-8 and kubernetes version of 1.9.3-gke.0.
+Kubernetes resource requests specified here requires minimum n1-standard-4 and kubernetes version of 1.9.3-gke.0.
 
 - add required config files:
   - `common/`
@@ -64,7 +64,10 @@ Kubernetes resource requests specified here requires minimum n1-standard-8 and k
 Configure your gcloud account and install docker first. Then use `gcloud auth configure-docker` to 
 configure `docker` to use `gcloud` as a credential helper. 
 Also, follow the guide [here](https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine) on creating secrets on kubernetes, 
-we only need the `cloudsql-instance-credentials`.
+we only need the `cloudsql-instance-credentials`, but we name it `service-account-credential`.
+```
+kubectl create secret generic service-account-credential --from-file=credential.json=/path/to/credential.json
+```
 The service account need to have these role:
 - `Cloud SQL Client`
 - `Kubernetes Engine Developer`
