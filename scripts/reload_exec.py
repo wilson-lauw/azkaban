@@ -14,7 +14,7 @@ def reload_exec(local=False):
     success = False
     while not success:
         try:
-            url = 'http://web.default.svc.cluster.local'
+            url = 'http://web.[namespace].svc.cluster.local'
             if local:
                 url = 'http://localhost:8081'
                 wait_for_port_ready(8081, 15)

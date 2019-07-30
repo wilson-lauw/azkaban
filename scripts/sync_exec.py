@@ -135,7 +135,7 @@ while True:
             print('executors list consistent')
 
         # grab executors from web server
-        URL = 'http://web.default.svc.cluster.local/status'
+        URL = 'http://web.[namespace].svc.cluster.local/status'
         resp = requests.get(URL, timeout=5)
         executorStatusMap = resp.json()['executorStatusMap']
         registered_executors = []
