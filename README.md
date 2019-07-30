@@ -106,7 +106,7 @@ kubectl -n kube-system apply  -f yaml/kube-system/pdb.yaml
 ```
 Connect to web UI via webproxy
 ```
-./webproxy.sh
+./webproxy.sh [namespace]
 ```
 Then go to `localhost:8081`
 
