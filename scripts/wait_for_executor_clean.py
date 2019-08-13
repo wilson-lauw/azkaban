@@ -8,7 +8,7 @@ from subprocess import getoutput
 from get_azk_creds import get_password
 
 URL = 'http://localhost:12321/serverStatistics'
-web_url = 'http://web.[namespace].svc.cluster.local'
+web_url = 'http://web.[gke-namespace].svc.cluster.local'
 sleep_secs = 5
 
 def get_num_assigned_flow():

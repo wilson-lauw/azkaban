@@ -66,22 +66,22 @@ configure `docker` to use `gcloud` as a credential helper.
 Also, follow the guide [here](https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine) on creating secrets on kubernetes, 
 we only need the `cloudsql-instance-credentials`, but we name it `service-account-credential`.
 ```
-kubectl -n [namespace] create secret generic service-account-credential --from-file=credential.json=/path/to/credential.json
+kubectl -n [gke-namespace] create secret generic service-account-credential --from-file=credential.json=/path/to/credential.json
 ```
 The service account need to have these role:
 - `Cloud SQL Client`
 - `Kubernetes Engine Developer`
 Put the `azkaban.properties` and `azkaban-users.xml` to the kubernetes secrets:
 ```
-kubectl -n [namespace] create secret generic azkaban-properties --from-file=azkaban.properties=/path/to/azkaban.properties
-kubectl -n [namespace] create secret generic azkaban-users-xml --from-file=azkaban-users.xml=/path/to/azkaban-users.xml
+kubectl -n [gke-namespace] create secret generic azkaban-properties --from-file=azkaban.properties=/path/to/azkaban.properties
+kubectl -n [gke-namespace] create secret generic azkaban-users-xml --from-file=azkaban-users.xml=/path/to/azkaban-users.xml
 ``` 
 
 Things that you need to change:
 - Project ID: `[project-id]` (you can find and replace all)
 - Image tag: `[image-tag]`
 - GKE cluster name: `[cluster-name]`
-- GKE namespace: `[namespace]`
+- GKE namespace: `[gke-namespace]`
 - CloudSQL instance: `azkaban-db`
 - Zone for GKE and CloudSQL: `asia-southeast1-a`
 - Azkaban config on `conf/`
@@ -97,7 +97,7 @@ docker push gcr.io/[project-id]/azkaban-sync:[image-tag]
 docker push gcr.io/[project-id]/azkaban-exec:[image-tag]
 docker push gcr.io/[project-id]/azkaban-web:[image-tag]
 
-kubectl -n [namespace] apply -f yaml/
+kubectl -n [gke-namespace] apply -f yaml/
 ```
 
 Experimental: set PDB for more efficient cluster scaling
@@ -106,7 +106,7 @@ kubectl -n kube-system apply  -f yaml/kube-system/pdb.yaml
 ```
 Connect to web UI via webproxy
 ```
-./webproxy.sh [namespace]
+./webproxy.sh [gke-namespace]
 ```
 Then go to `localhost:8081`
 

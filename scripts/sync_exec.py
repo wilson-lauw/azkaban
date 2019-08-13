@@ -12,10 +12,10 @@ import datetime
 
 
 def check_exec_pods_stability():
-    cmd = 'kubectl -n [namespace] get po -o wide|grep exec|grep 2/2|grep Running|wc -l'
+    cmd = 'kubectl -n [gke-namespace] get po -o wide|grep exec|grep 2/2|grep Running|wc -l'
     num_stable_pods = int(getoutput(cmd))
 
-    cmd = "kubectl -n [namespace] get po -o wide|grep exec|grep -v Evicted|grep -Ev '0/2.*Terminating'|wc -l"
+    cmd = "kubectl -n [gke-namespace] get po -o wide|grep exec|grep -v Evicted|grep -Ev '0/2.*Terminating'|wc -l"
     num_all_pods = int(getoutput(cmd))
 
     stable = num_stable_pods == num_all_pods
@@ -23,22 +23,22 @@ def check_exec_pods_stability():
 
 
 def clean_evicted_pods():
-    cmd = "kubectl -n [namespace] get po|grep Evicted|awk '{print $1}'"
+    cmd = "kubectl -n [gke-namespace] get po|grep Evicted|awk '{print $1}'"
     result = getoutput(cmd).split('\n')
     result = filter(lambda l:len(l) > 0, result)
     for pod in result:
         print('cleaning pod', pod)
-        cmd = 'kubectl -n [namespace] delete po {} --force --grace-period=0'.format(pod)
+        cmd = 'kubectl -n [gke-namespace] delete po {} --force --grace-period=0'.format(pod)
         print(getoutput(cmd))
 
 
 def clean_terminating_pods():
-    cmd = "kubectl -n [namespace] get po|grep Terminating|grep 0/2|awk '{print $1}'"
+    cmd = "kubectl -n [gke-namespace] get po|grep Terminating|grep 0/2|awk '{print $1}'"
     result = getoutput(cmd).split('\n')
     result = filter(lambda l:len(l) > 0, result)
     for pod in result:
         print('cleaning pod', pod)
-        cmd = 'kubectl -n [namespace] delete po {} --force --grace-period=0'.format(pod)
+        cmd = 'kubectl -n [gke-namespace] delete po {} --force --grace-period=0'.format(pod)
         print(getoutput(cmd))
 
 
@@ -105,7 +105,7 @@ while True:
         print('executors_in_db:', executors_in_db)
 
         # grab executors list from kubectl
-        cmd = "kubectl -n [namespace] get po -o wide|grep exec|grep 2/2|grep Running|awk '{print $6}'"
+        cmd = "kubectl -n [gke-namespace] get po -o wide|grep exec|grep 2/2|grep Running|awk '{print $6}'"
         result = getoutput(cmd).split('\n')
         result = filter(lambda l:len(l) > 0, result)
         executors_in_kube = []
@@ -135,7 +135,7 @@ while True:
             print('executors list consistent')
 
         # grab executors from web server
-        URL = 'http://web.[namespace].svc.cluster.local/status'
+        URL = 'http://web.[gke-namespace].svc.cluster.local/status'
         resp = requests.get(URL, timeout=5)
         executorStatusMap = resp.json()['executorStatusMap']
         registered_executors = []
