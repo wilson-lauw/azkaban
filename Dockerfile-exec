@@ -11,7 +11,7 @@ ADD scripts /scripts
 RUN chmod +x /scripts/*
 ADD yaml /yaml
 
-ENV AZKABAN_OPTS -Xmx8G -Xms8G -XX:+ParallelRefProcEnabled 
+ENV AZKABAN_OPTS -Xmx4G -Xms4G -XX:+ParallelRefProcEnabled
 EXPOSE 12321
 
 CMD /scripts/start-exec.sh
