@@ -1,4 +1,7 @@
+#!/usr/bin/python3
+
 from subprocess import getoutput
+
 
 def get_password(user):
     cmd = 'cat /azkaban/conf/azkaban-users.xml|grep username=\\"{}\\"'.format(user)

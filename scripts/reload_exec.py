@@ -7,6 +7,7 @@ from wait_for_port_ready import wait_for_port_ready
 from get_azk_creds import get_password
 import traceback
 
+
 def reload_exec(local=False):
 
     retries = 0
