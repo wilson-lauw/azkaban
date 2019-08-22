@@ -14,7 +14,7 @@ print(r.text)
 cookies = r.cookies
 
 time_now = time.time()*1000
-threshold = 10 * 60000 #10 minutes
+threshold = 10 * 60000  # 10 minutes
 
 url = 'http://localhost:8081/jmx?ajax=getAllMBeanAttributes&mBean=azkaban.jmx.JmxExecutorManager%3Aname%3DexecutorManager'
 r = requests.get(url, cookies=cookies, timeout=5)

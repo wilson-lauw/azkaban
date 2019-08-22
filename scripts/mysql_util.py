@@ -1,12 +1,14 @@
-import time
-import sys
-import traceback
+#!/usr/bin/python3
 
 import MySQLdb
+import time
+import traceback
+
 max_retries = 3
 retries_interval = 10
 
-def get_db_cur(host,user,passwd,db,dictCursor=False):
+
+def get_db_cur(host, user, passwd, db, dictCursor=False):
     db = MySQLdb.connect(
         host=host,
         user=user,
@@ -22,11 +24,12 @@ def get_db_cur(host,user,passwd,db,dictCursor=False):
 
     return db, cur
 
-def mysql_fetch(sql,host,user,passwd,db,dictCursor=True):
+
+def mysql_fetch(sql, host, user, passwd, db, dictCursor=True):
     retry_counter = 0
     while retry_counter < max_retries:
         try:
-            db, cur = get_db_cur(host,user,passwd,db,dictCursor)
+            db, cur = get_db_cur(host, user, passwd, db, dictCursor)
             print('executing mysql statement ' + sql)
             start = time.time()
             cur.execute(sql)
@@ -45,13 +48,14 @@ def mysql_fetch(sql,host,user,passwd,db,dictCursor=True):
 
     raise Exception('MySQL fetch failed')
 
-def mysql_execute(sql,host,user,passwd,db):
+
+def mysql_execute(sql, host, user, passwd, db):
     success = False
     retry_counter = 0
     while retry_counter < max_retries and not success:
         retry_counter += 1
         try:
-            db, cur = get_db_cur(host,user,passwd,db)
+            db, cur = get_db_cur(host, user, passwd, db)
             if type(sql) == type([]):
                 for sta in sql:
                     print('executing mysql statement ' + sta)

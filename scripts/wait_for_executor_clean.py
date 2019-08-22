@@ -11,9 +11,11 @@ URL = 'http://localhost:12321/serverStatistics'
 web_url = 'http://web.[gke-namespace].svc.cluster.local'
 sleep_secs = 5
 
+
 def get_num_assigned_flow():
     resp = requests.post(URL, timeout=5)
     return int(resp.json()['numberOfAssignedFlows'])
+
 
 def get_running_flows_from_web(this_executor_id, cookies):
     url = web_url + '/executor'
@@ -42,6 +44,7 @@ def get_running_flows_from_web(this_executor_id, cookies):
 
     return flows
 
+
 start = time.time()
 
 cmd = 'cat /yaml/exec.yaml|grep terminationGracePeriodSeconds'
@@ -67,7 +70,7 @@ while not clean:
             break
 
 if not clean:
-    ## check for flows that are still running and kill it
+    # check for flows that are still running and kill it
     url = 'http://localhost:12321/executor?action=getStatus'
     resp = requests.post(url, timeout=5)
     this_executor_id = int(resp.json()['executor_id'])
@@ -84,8 +87,7 @@ if not clean:
     # kill the flows
     for id in flows.keys():
         url = web_url + '/executor?ajax=cancelFlow&execid=' + str(id)
-        print('killing execution id ' + str(id) + \
-                requests.get(url, cookies=cookies, timeout=5).text)
+        print('killing execution id ' + str(id) + requests.get(url, cookies=cookies, timeout=5).text)
 
     # wait for executor clean
     result = len(get_running_flows_from_web(this_executor_id, cookies))
@@ -124,8 +126,7 @@ if not clean:
         execution_info = flows[execution_id]
         flow_override = []
         for k,v in execution_info['info']['flowParam'].items():
-            flow_override.append(urllib.parse.quote('flowOverride[{k}]'.format(k=k)) + \
-                '={v}'.format(v=v))
+            flow_override.append(urllib.parse.quote('flowOverride[{k}]'.format(k=k)) + '={v}'.format(v=v))
         flow_override = '&' + '&'.join(flow_override) if len(flow_override) > 0 else ''
         disabled = []
         for k,v in execution_info['info']['nodeStatus'].items():
@@ -151,10 +152,10 @@ if not clean:
             notifyFailureLast=execution_info['info']['notifyFailureLast'],
             concurrentOption=execution_info['info']['concurrentOptions']
         )
-        url = url.replace('\n','').replace(' ','') + flow_override
+        url = url.replace('\n', '').replace(' ', '') + flow_override
         print(url)
         result = requests.get(url, cookies=cookies, timeout=5)
         print(result.text)
     
-## allow for notifications
+# allow for notifications
 time.sleep(10)
