@@ -82,7 +82,7 @@ Things that you need to change:
 - Image tag: `[image-tag]`
 - GKE cluster name: `[cluster-name]`
 - GKE namespace: `[gke-namespace]`
-- CloudSQL instance: `azkaban-db`
+- CloudSQL instance: `[azkaban-cloudsql-db]`
 - Zone for GKE and CloudSQL: `asia-southeast1-a`
 - Azkaban config on `conf/`
 
