@@ -22,8 +22,7 @@ var handleJobMenuClick = function (action, el, pos) {
       + flowName + "&job=" + jobid;
   if (action == "open") {
     window.location.href = requestURL;
-  }
-  else if (action == "openwindow") {
+  } else if (action == "openwindow") {
     window.open(requestURL);
   }
 }
@@ -59,8 +58,7 @@ azkaban.StatusView = Backbone.View.extend({
 
     if (!startTime || startTime == -1) {
       $("#startTime").text("-");
-    }
-    else {
+    } else {
       var date = new Date(startTime);
       $("#startTime").text(getDateFormat(date));
 
@@ -76,8 +74,7 @@ azkaban.StatusView = Backbone.View.extend({
 
     if (!endTime || endTime == -1) {
       $("#endTime").text("-");
-    }
-    else {
+    } else {
       var date = new Date(endTime);
       $("#endTime").text(getDateFormat(date));
     }
@@ -112,8 +109,7 @@ azkaban.FlowTabView = Backbone.View.extend({
     var selectedView = settings.selectedView;
     if (selectedView == "jobslist") {
       this.handleJobslistLinkClick();
-    }
-    else {
+    } else {
       this.handleGraphLinkClick();
     }
   },
@@ -203,33 +199,25 @@ azkaban.FlowTabView = Backbone.View.extend({
 
     if (data.status == "SUCCEEDED") {
       $("#executebtn").show();
-    }
-    else if (data.status == "PREPARING") {
+    } else if (data.status == "PREPARING") {
       $("#cancelbtn").show();
-    }
-    else if (data.status == "FAILED") {
+    } else if (data.status == "FAILED") {
       $("#executebtn").show();
-    }
-    else if (data.status == "FAILED_FINISHING") {
+    } else if (data.status == "FAILED_FINISHING") {
       $("#cancelbtn").show();
       $("#executebtn").hide();
       $("#retrybtn").show();
-    }
-    else if (data.status == "RUNNING") {
+    } else if (data.status == "RUNNING") {
       $("#cancelbtn").show();
       $("#pausebtn").show();
-    }
-    else if (data.status == "PAUSED") {
+    } else if (data.status == "PAUSED") {
       $("#cancelbtn").show();
       $("#resumebtn").show();
-    }
-    else if (data.status == "WAITING") {
+    } else if (data.status == "WAITING") {
       $("#cancelbtn").show();
-    }
-    else if (data.status == "KILLED") {
+    } else if (data.status == "KILLED") {
       $("#executebtn").show();
-    }
-    else if (data.status == "KILLING") {
+    } else if (data.status == "KILLING") {
     }
   },
 
@@ -237,18 +225,27 @@ azkaban.FlowTabView = Backbone.View.extend({
     var requestURL = contextURL + "/executor";
     var requestData = {"execid": execId, "ajax": "cancelFlow"};
     var successHandler = function (data) {
-      console.log("cancel clicked");
+      hideDialog();
+      $("#cancelbtn").text("Kill");
       if (data.error) {
         showDialog("Error", data.error);
-      }
-      else {
+      } else {
         showDialog("Cancelled", "Flow has been cancelled.");
         setTimeout(function () {
           updateStatus();
         }, 1100);
       }
     };
-    ajaxCall(requestURL, requestData, successHandler);
+
+    var beforeSendHandler = function () {
+      $("#pausebtn").prop('disabled', true);
+      $("#cancelbtn").prop('disabled', true);
+      $("#cancelbtn").text("Killing...");
+      showDialog("Processing", "Killing all running jobs. This may take a"
+          + " while.");
+    };
+
+    ajaxCall(requestURL, requestData, successHandler, beforeSendHandler, 'POST');
   },
 
   handleRetryClick: function (evt) {
@@ -259,8 +256,7 @@ azkaban.FlowTabView = Backbone.View.extend({
       console.log("cancel clicked");
       if (data.error) {
         showDialog("Error", data.error);
-      }
-      else {
+      } else {
         showDialog("Retry", "Flow has been retried.");
         setTimeout(function () {
           updateStatus();
@@ -291,8 +287,7 @@ azkaban.FlowTabView = Backbone.View.extend({
       console.log("pause clicked");
       if (data.error) {
         showDialog("Error", data.error);
-      }
-      else {
+      } else {
         showDialog("Paused", "Flow has been paused.");
         setTimeout(function () {
           updateStatus();
@@ -309,8 +304,7 @@ azkaban.FlowTabView = Backbone.View.extend({
       console.log("pause clicked");
       if (data.error) {
         showDialog("Error", data.error);
-      }
-      else {
+      } else {
         showDialog("Resumed", "Flow has been resumed.");
         setTimeout(function () {
           updateStatus();
@@ -325,7 +319,11 @@ var showDialog = function (title, message) {
   $('#messageTitle').text(title);
   $('#messageBox').text(message);
   $('#messageDialog').modal();
-}
+};
+
+var hideDialog = function () {
+  $('#messageDialog').modal('hide');
+};
 
 var jobListView;
 var mainSvgGraphView;
@@ -358,13 +356,11 @@ azkaban.FlowLogView = Backbone.View.extend({
         console.log("fetchLogs");
         if (data.error) {
           console.log(data.error);
-        }
-        else {
+        } else {
           var log = $("#logSection").text();
           if (!log) {
             log = data.data;
-          }
-          else {
+          } else {
             log += data.data;
           }
 
@@ -469,8 +465,7 @@ function updatePastAttempts(data, update) {
         data.pastAttempts.push(updatedAttempt);
       }
     }
-  }
-  else {
+  } else {
     data.pastAttempts = update.pastAttempts;
   }
 }
@@ -514,28 +509,24 @@ var updaterFunction = function () {
       // 2 min updates
       setTimeout(function () {
         updaterFunction();
-      }, 5000);
-    }
-    else if (data.status == "KILLING") {
+      }, 2 * 60 * 1000);
+    } else if (data.status == "KILLING") {
       // 30 s updates - should finish soon now
       setTimeout(function () {
         updaterFunction();
-      }, 5000);
-    }
-    else if (data.status != "SUCCEEDED" && data.status != "FAILED") {
+      }, 30 * 1000);
+    } else if (data.status != "SUCCEEDED" && data.status != "FAILED") {
       // 2 min updates
       setTimeout(function () {
         updaterFunction();
-      }, 5000);
-    }
-    else {
+      }, 2 * 60 * 1000);
+    } else {
       console.log("Flow finished, so no more updates");
       setTimeout(function () {
         updateStatus(0);
       }, 500);
     }
-  }
-  else {
+  } else {
     console.log("Flow finished, so no more updates");
   }
 }
@@ -552,99 +543,9 @@ var logUpdaterFunction = function () {
     setTimeout(function () {
       logUpdaterFunction();
     }, 2 * 60 * 1000);
-  }
-  else {
+  } else {
     flowLogView.handleUpdate();
   }
-}
-
-var exNodeClickCallback = function (event) {
-  console.log("Node clicked callback");
-  var jobId = event.currentTarget.jobid;
-  var requestURL = contextURL + "/manager?project=" + projectName + "&flow="
-      + flowId + "&job=" + jobId;
-  var visualizerURL = contextURL + "/pigvisualizer?execid=" + execId + "&jobid="
-      + jobId;
-
-  var menu = [
-    {
-      title: "Open Job...", callback: function () {
-      window.location.href = requestURL;
-    }
-    },
-    {
-      title: "Open Job in New Window...", callback: function () {
-      window.open(requestURL);
-    }
-    },
-    {
-      title: "Visualize Job...", callback: function () {
-      window.location.href = visualizerURL;
-    }
-    }
-  ];
-
-  contextMenuView.show(event, menu);
-}
-
-var exJobClickCallback = function (event) {
-  console.log("Node clicked callback");
-  var jobId = event.currentTarget.jobid;
-  var requestURL = contextURL + "/manager?project=" + projectName + "&flow="
-      + flowId + "&job=" + jobId;
-  var visualizerURL = contextURL + "/pigvisualizer?execid=" + execId + "&jobid="
-      + jobId;
-
-  var menu = [
-    {
-      title: "Open Job...", callback: function () {
-      window.location.href = requestURL;
-    }
-    },
-    {
-      title: "Open Job in New Window...", callback: function () {
-      window.open(requestURL);
-    }
-    },
-    {
-      title: "Visualize Job...", callback: function () {
-      window.location.href = visualizerURL;
-    }
-    }
-  ];
-
-  contextMenuView.show(event, menu);
-}
-
-var exEdgeClickCallback = function (event) {
-  console.log("Edge clicked callback");
-}
-
-var exGraphClickCallback = function (event) {
-  console.log("Graph clicked callback");
-  var requestURL = contextURL + "/manager?project=" + projectName + "&flow="
-      + flowId;
-
-  var menu = [
-    {
-      title: "Open Flow...", callback: function () {
-      window.location.href = requestURL;
-    }
-    },
-    {
-      title: "Open Flow in New Window...", callback: function () {
-      window.open(requestURL);
-    }
-    },
-    {break: 1},
-    {
-      title: "Center Graph", callback: function () {
-      graphModel.trigger("resetPanZoom");
-    }
-    }
-  ];
-
-  contextMenuView.show(event, menu);
 }
 
 var flowStatsView;
@@ -715,8 +616,7 @@ $(function () {
   if (execId != "-1" && execId != "-2") {
     requestURL = contextURL + "/executor";
     requestData = {"execid": execId, "ajax": "fetchexecflow"};
-  }
-  else {
+  } else {
     requestURL = contextURL + "/manager";
     requestData = {
       "project": projectName,
@@ -726,7 +626,6 @@ $(function () {
   }
 
   var successHandler = function (data) {
-    console.log("data fetched");
     graphModel.addFlow(data);
     graphModel.trigger("change:graph");
 
@@ -738,18 +637,14 @@ $(function () {
       var hash = window.location.hash;
       if (hash == "#jobslist") {
         flowTabView.handleJobslistLinkClick();
-      }
-      else if (hash == "#log") {
+      } else if (hash == "#log") {
         flowTabView.handleLogLinkClick();
-      }
-      else if (hash == "#stats") {
+      } else if (hash == "#stats") {
         flowTabView.handleStatsLinkClick();
-      }
-      else if (hash == "#triggerslist") {
+      } else if (hash == "#triggerslist") {
         flowTabView.handleFlowTriggerLinkClick();
       }
-    }
-    else {
+    } else {
       flowTabView.handleGraphLinkClick();
     }
     updaterFunction();
@@ -760,8 +655,7 @@ $(function () {
   requestURL = contextURL + "/flowtriggerinstance";
   if (execId != "-1" && execId != "-2") {
     requestData = {"execid": execId, "ajax": "fetchTriggerStatus"};
-  }
-  else if (triggerInstanceId != "-1") {
+  } else if (triggerInstanceId != "-1") {
     requestData = {
       "triggerinstid": triggerInstanceId,
       "ajax": "fetchTriggerStatus"
