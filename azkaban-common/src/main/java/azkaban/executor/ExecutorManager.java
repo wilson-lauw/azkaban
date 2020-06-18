@@ -1140,8 +1140,6 @@ public class ExecutorManager extends EventHandler implements
     @Override
     public void run() {
       // Loops till QueueProcessorThread is shutdown
-      int refreshExecutorsThreshold = 60;
-      int refreshExecutorsCounter = 0;
       while (!this.shutdown) {
         synchronized (this) {
           try {
@@ -1151,11 +1149,6 @@ public class ExecutorManager extends EventHandler implements
                   this.activeExecutorRefreshWindowInFlows);
             }
             wait(QUEUE_PROCESSOR_WAIT_IN_MS);
-            refreshExecutorsCounter += 1;
-            if (refreshExecutorsCounter >= refreshExecutorsThreshold) {
-              refreshExecutors();
-              refreshExecutorsCounter = 0;
-            }
           } catch (final Exception e) {
             ExecutorManager.logger.error(
                 "QueueProcessorThread Interrupted. Probably to shut down.", e);
