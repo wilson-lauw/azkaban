@@ -84,7 +84,6 @@ Things that you need to change:
 - GKE namespace: `[gke-namespace]`
 - CloudSQL instance: `[azkaban-cloudsql-db]`
 - Zone for GKE and CloudSQL: `asia-southeast1-a`
-- Azkaban config on `conf/`
 
 ```
 ./gradlew clean build installDist
