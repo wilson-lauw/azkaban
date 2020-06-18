@@ -39,7 +39,3 @@ currentpid
 
 #python
 __pycache__/
-
-#extra
-result.zip
-*.pyc
