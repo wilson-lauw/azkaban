@@ -1140,6 +1140,8 @@ public class ExecutorManager extends EventHandler implements
     @Override
     public void run() {
       // Loops till QueueProcessorThread is shutdown
+      int refreshExecutorsThreshold = 60;
+      int refreshExecutorsCounter = 0;
       while (!this.shutdown) {
         synchronized (this) {
           try {
@@ -1149,6 +1151,11 @@ public class ExecutorManager extends EventHandler implements
                   this.activeExecutorRefreshWindowInFlows);
             }
             wait(QUEUE_PROCESSOR_WAIT_IN_MS);
+            refreshExecutorsCounter += 1;
+            if (refreshExecutorsCounter >= refreshExecutorsThreshold) {
+              refreshExecutors();
+              refreshExecutorsCounter = 0;
+            }
           } catch (final Exception e) {
             ExecutorManager.logger.error(
                 "QueueProcessorThread Interrupted. Probably to shut down.", e);
@@ -1248,7 +1255,7 @@ public class ExecutorManager extends EventHandler implements
               updateRemainingExecutorsAndSleep(remainingExecutors, selectedExecutor);
             }
           }
-        } while (reference.getNumErrors() < this.maxDispatchingErrors);
+        } while (reference.getNumErrors() < Integer.MAX_VALUE);//this.maxDispatchingErrors);
         // GAVE UP DISPATCHING
         final String message = "Failed to dispatch queued execution " + exflow.getId() + " because "
             + "reached " + ConfigurationKeys.MAX_DISPATCHING_ERRORS_PERMITTED
@@ -1262,7 +1269,7 @@ public class ExecutorManager extends EventHandler implements
         final Executor selectedExecutor) {
       remainingExecutors.remove(selectedExecutor);
       if (remainingExecutors.isEmpty()) {
-        remainingExecutors.addAll(ExecutorManager.this.activeExecutors.getAll());
+        //remainingExecutors.addAll(ExecutorManager.this.activeExecutors.getAll());
         sleepAfterDispatchFailure();
       }
     }
