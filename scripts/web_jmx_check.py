@@ -21,7 +21,7 @@ r = requests.get(url, cookies=cookies, timeout=5)
 print(r.status_code)
 r = r.json()['attributes']
 
-timestamp_to_be_checked = ['LastSuccessfulExecutorInfoRefresh', 'LastThreadCheckTime']
+timestamp_to_be_checked = ['LastThreadCheckTime']  # LastSuccessfulExecutorInfoRefresh
 
 for ts_type in timestamp_to_be_checked:
     lag = time_now - r[ts_type]
