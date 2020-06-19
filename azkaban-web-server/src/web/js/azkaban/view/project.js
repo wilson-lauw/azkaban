@@ -229,8 +229,7 @@ azkaban.FlowTableView = Backbone.View.extend({
       ajax: "executeFlow",
       flow: flowId,
       job: jobId,
-      withDep: true,
-      withDes: false
+      withDep: true
     };
     this.executeFlowDialog(executingData);
   },
@@ -245,7 +244,6 @@ azkaban.FlowTableView = Backbone.View.extend({
       ajax: "executeFlow",
       flow: flowId,
       job: jobId,
-      withDep: false,
       withDes: true
     };
     this.executeFlowDialog(executingData);
