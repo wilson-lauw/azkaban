@@ -83,7 +83,7 @@ Things that you need to change:
 - GKE cluster name: `[cluster-name]`
 - GKE namespace: `[gke-namespace]`
 - CloudSQL instance: `[azkaban-cloudsql-db]`
-- Zone for GKE and CloudSQL: `asia-southeast1-a`
+- Zone for GKE and CloudSQL: `asia-southeast1`
 
 ```
 ./gradlew clean build installDist

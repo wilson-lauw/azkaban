@@ -50,7 +50,7 @@ print(getoutput(cmd))
 # activate service account and kubectl
 cmd = 'gcloud auth activate-service-account --key-file=/secrets/credential.json'
 print(getoutput(cmd))
-cmd = 'gcloud container clusters get-credentials [cluster-name] --zone asia-southeast1-a --project {}'.format(sys.argv[1])
+cmd = 'gcloud container clusters get-credentials [cluster-name] --zone asia-southeast1 --project {}'.format(sys.argv[1])
 print(getoutput(cmd))
 
 wait_for_port_ready(3306, 15)
