@@ -30,10 +30,8 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+
+import org.junit.*;
 import org.junit.rules.TemporaryFolder;
 
 public class FileWatcherTest {
@@ -70,6 +68,7 @@ public class FileWatcherTest {
     }
   }
 
+  @Ignore
   @Test
   public void registerAndTake() throws Exception {
     write();
