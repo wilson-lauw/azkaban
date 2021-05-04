@@ -1,4 +1,4 @@
-FROM openjdk:11-jre
+FROM openjdk:11.0.8-jre
 
 RUN apt-get update
 RUN apt-get install -y procps
