@@ -128,7 +128,7 @@ public final class ExecutorFilter extends CandidateFilter<Executor, ExecutableFl
   private static FactorFilter<Executor, ExecutableFlow> getMinimumReservedMemoryFilter() {
     return FactorFilter
         .create(MINIMUMFREEMEMORY_FILTER_NAME, new FactorFilter.Filter<Executor, ExecutableFlow>() {
-          private static final int MINIMUM_FREE_MEMORY = 6 * 1024;
+          private static final int MINIMUM_FREE_MEMORY = 3 * 1024;
 
           @Override
           public boolean filterTarget(final Executor filteringTarget,

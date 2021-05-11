@@ -118,8 +118,8 @@ public class FlowRunnerManager implements EventListener<Event>,
   private static final String EXECUTOR_FLOW_THREADS = "executor.flow.threads";
   private static final String FLOW_NUM_JOB_THREADS = "flow.num.job.threads";
 
-  // recently finished secs to clean up. 1 minute
-  private static final int RECENTLY_FINISHED_TIME_TO_LIVE = 60 * 1000;
+  // recently finished secs to clean up. 15 minute
+  private static final int RECENTLY_FINISHED_TIME_TO_LIVE = 15 * 60 * 1000;
 
   private static final int DEFAULT_NUM_EXECUTING_FLOWS = 30;
   private static final int DEFAULT_FLOW_NUM_JOB_TREADS = 10;

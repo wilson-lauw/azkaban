@@ -865,7 +865,7 @@ public class ExecutorManager extends AbstractExecutorManagerAdapter {
               updateRemainingExecutorsAndSleep(remainingExecutors, selectedExecutor);
             }
           }
-        } while (reference.getNumErrors() < this.maxDispatchingErrors);
+        } while (reference.getNumErrors() < Integer.MAX_VALUE);//this.maxDispatchingErrors);
         // GAVE UP DISPATCHING
         final String message = "Failed to dispatch queued execution " + exflow.getId() + " because "
             + "reached " + ConfigurationKeys.MAX_DISPATCHING_ERRORS_PERMITTED
@@ -879,7 +879,7 @@ public class ExecutorManager extends AbstractExecutorManagerAdapter {
         final Executor selectedExecutor) {
       remainingExecutors.remove(selectedExecutor);
       if (remainingExecutors.isEmpty()) {
-        remainingExecutors.addAll(ExecutorManager.this.activeExecutors.getAll());
+        //remainingExecutors.addAll(ExecutorManager.this.activeExecutors.getAll());
         sleepAfterDispatchFailure();
       }
     }

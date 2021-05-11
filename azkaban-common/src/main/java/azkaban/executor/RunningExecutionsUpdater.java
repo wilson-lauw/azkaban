@@ -138,7 +138,7 @@ public class RunningExecutionsUpdater {
       final ArrayList<ExecutableFlow> finalizeFlows) {
     logger.error("Failed to get update from executor " + executor.getHost(), e);
     boolean sendUnresponsiveEmail = false;
-    final boolean executorRemoved = isExecutorRemoved(executor.getId());
+    final boolean executorRemoved = isExecutorRemoved(executor.getHost(), executor.getPort());
     for (final ExecutableFlow flow : entry.getValue()) {
       final Pair<ExecutionReference, ExecutableFlow> pair =
           this.runningExecutions.get().get(flow.getExecutionId());
@@ -171,6 +171,18 @@ public class RunningExecutionsUpdater {
     final Executor fetchedExecutor;
     try {
       fetchedExecutor = this.executorLoader.fetchExecutor(id);
+    } catch (final ExecutorManagerException e) {
+      logger.error("Couldn't check if executor exists", e);
+      // don't know if removed or not -> default to false
+      return false;
+    }
+    return fetchedExecutor == null;
+  }
+
+  private boolean isExecutorRemoved(final String host, final int port) {
+    final Executor fetchedExecutor;
+    try {
+      fetchedExecutor = this.executorLoader.fetchExecutor(host, port);
     } catch (final ExecutorManagerException e) {
       logger.error("Couldn't check if executor exists", e);
       // don't know if removed or not -> default to false

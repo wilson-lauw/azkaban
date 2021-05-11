@@ -30,7 +30,7 @@ public class OsMemoryUtilTest {
   @Test
   public void getOsTotalFreeMemorySize() {
     final List<String> lines =
-        Arrays.asList("MemFree:        1 kB", "Buffers:          2 kB", "Cached:          3 kB",
+        Arrays.asList("MemFree:        1 kB", "MemAvailable:     10 kB", "Buffers:          2 kB", "Cached:          3 kB",
             "SwapFree:    4 kB",
             "Foo: 10 kB");
 
