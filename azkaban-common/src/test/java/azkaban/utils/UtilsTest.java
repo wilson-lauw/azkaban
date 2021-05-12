@@ -57,7 +57,6 @@ public class UtilsTest {
   }
 
   /* Test CronExpression valid cases*/
-  @Ignore
   @Test
   public void testValidCronExpressionV() {
 
