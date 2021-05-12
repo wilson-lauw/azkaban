@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-import javafx.util.Pair;
+import java.util.AbstractMap.SimpleEntry;
 import org.junit.After;
 import org.junit.Test;
 
@@ -53,7 +53,7 @@ public class DagServiceTest {
   private final DagProcessor dagProcessor = new TestDagProcessor(this.dagFinishedLatch,
       this.statusChangeRecorder);
   private final DagBuilder dagBuilder = new DagBuilder("fa", this.dagProcessor);
-  private final List<Pair<String, Status>> expectedSequence = new ArrayList<>();
+  private final List<SimpleEntry<String, Status>> expectedSequence = new ArrayList<>();
 
 
   @After
@@ -291,7 +291,7 @@ public class DagServiceTest {
   }
 
   private void addToExpectedSequence(final String name, final Status status) {
-    this.expectedSequence.add(new Pair<>(name, status));
+    this.expectedSequence.add(new SimpleEntry<>(name, status));
   }
 
   private void runDag(final Dag dag) throws InterruptedException {

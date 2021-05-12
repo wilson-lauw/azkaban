@@ -187,7 +187,7 @@ azkaban.FlowExecuteDialogView = Backbone.View.extend({
     var self = this;
     var loadCallback = function () {
       if (jobId) {
-        self.showExecuteJob(projectName, flowId, jobId, data.withDep);
+        self.showExecuteJob(projectName, flowId, jobId, data.withDep, data.withDes);
       }
       else {
         self.showExecuteFlow(projectName, flowId);
@@ -207,7 +207,7 @@ azkaban.FlowExecuteDialogView = Backbone.View.extend({
     this.model.trigger("change:graph");
   },
 
-  showExecuteJob: function (projectName, flowId, jobId, withDep) {
+  showExecuteJob: function (projectName, flowId, jobId, withDep, withDes) {
     sideMenuDialogView.menuSelect($("#flow-option"));
     $("#execute-flow-panel-title").text("Execute Flow " + flowId);
 
@@ -222,6 +222,10 @@ azkaban.FlowExecuteDialogView = Backbone.View.extend({
 
     if (withDep) {
       recurseAllAncestors(jobNode, false);
+    }
+
+    if (withDes) {
+      recurseAllDescendents(jobNode, false);
     }
 
     this.showExecutionOptionPanel();

@@ -24,6 +24,7 @@ azkaban.FlowTableView = Backbone.View.extend({
     "mouseout .expanded-flow-job-list li": "unhighlight",
     "click .runJob": "runJob",
     "click .runWithDep": "runWithDep",
+    "click .runWithDes": "runWithDes",
     "click .execute-flow": "executeFlow",
     "click .viewFlow": "viewFlow",
     "click .viewJob": "viewJob"
@@ -130,6 +131,17 @@ azkaban.FlowTableView = Backbone.View.extend({
           divRunWithDep.jobName = name;
           divRunWithDep.flowId = flowId;
           $(hoverMenuDiv).append(divRunWithDep);
+
+          var divRunWithDes = document.createElement("button");
+          $(divRunWithDes).attr('type', 'button');
+          $(divRunWithDes).addClass("btn");
+          $(divRunWithDes).addClass("btn-success");
+          $(divRunWithDes).addClass("btn-xs");
+          $(divRunWithDes).addClass("runWithDes");
+          $(divRunWithDes).text("Run With Dependents");
+          divRunWithDes.jobName = name;
+          divRunWithDes.flowId = flowId;
+          $(hoverMenuDiv).append(divRunWithDes);
         }
         $(li).append(hoverMenuDiv);
       }
@@ -218,6 +230,21 @@ azkaban.FlowTableView = Backbone.View.extend({
       flow: flowId,
       job: jobId,
       withDep: true
+    };
+    this.executeFlowDialog(executingData);
+  },
+
+  runWithDes: function (evt) {
+    var jobId = evt.currentTarget.jobName;
+    var flowId = evt.currentTarget.flowId;
+    console.log("Run With Dep");
+
+    var executingData = {
+      project: projectName,
+      ajax: "executeFlow",
+      flow: flowId,
+      job: jobId,
+      withDes: true
     };
     this.executeFlowDialog(executingData);
   },

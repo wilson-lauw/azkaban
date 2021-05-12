@@ -19,6 +19,7 @@ package azkaban.utils;
 import java.util.Calendar;
 import org.joda.time.DateTimeZone;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -56,6 +57,7 @@ public class UtilsTest {
   }
 
   /* Test CronExpression valid cases*/
+  @Ignore
   @Test
   public void testValidCronExpressionV() {
 

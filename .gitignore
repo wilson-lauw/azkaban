@@ -46,3 +46,7 @@ __pycache__/
 
 #test artifacts
 LOCAL_STORAGE/
+
+#extra
+result.zip
+*.pyc

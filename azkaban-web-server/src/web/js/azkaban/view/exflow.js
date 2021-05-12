@@ -509,17 +509,17 @@ var updaterFunction = function () {
       // 2 min updates
       setTimeout(function () {
         updaterFunction();
-      }, 2 * 60 * 1000);
+      }, 5 * 1000);
     } else if (data.status == "KILLING") {
       // 30 s updates - should finish soon now
       setTimeout(function () {
         updaterFunction();
-      }, 30 * 1000);
+      }, 5 * 1000);
     } else if (data.status != "SUCCEEDED" && data.status != "FAILED") {
       // 2 min updates
       setTimeout(function () {
         updaterFunction();
-      }, 2 * 60 * 1000);
+      }, 5 * 1000);
     } else {
       console.log("Flow finished, so no more updates");
       setTimeout(function () {
